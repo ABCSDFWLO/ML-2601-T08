@@ -1,0 +1,33 @@
+services:
+  halfweg:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REQUIREMENTS_FILE: requirements-docker.txt
+    image: ml2601-halfweg:latest
+    working_dir: /workspace
+    environment:
+      PYTHONPATH: /workspace
+    volumes:
+      - ./:/workspace
+    command: python scripts/train_halfweg.py --help
+
+  halfweg-gpu:
+    profiles:
+      - gpu
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REQUIREMENTS_FILE: requirements-docker-gpu.txt
+    image: ml2601-halfweg:gpu
+    working_dir: /workspace
+    environment:
+      PYTHONPATH: /workspace
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    volumes:
+      - ./:/workspace
+    gpus: all
+    command: python scripts/train_halfweg.py --help
