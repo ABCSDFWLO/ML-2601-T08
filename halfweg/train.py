@@ -115,8 +115,11 @@ class HalfWegTrainer:
 
     def build_training_examples(self) -> List[PlanExample]:
         rows: List[PlanExample] = []
-        for level, u, v, b in self.sample_planning_problems():
-            plan = self.planner.best_plan_over_hierarchy(level, u, v, b)
+        probs = self.sample_planning_problems()
+        for level, u, v, b in probs:
+            plan = self.planner.search_policy(self.cfg.R, level, u, v, b)
+            if len(plan) == 0:
+                plan = [4]
             rows.append(PlanExample(level=level, u=u, v=v, b=b, plan=plan))
         return rows
 
@@ -155,8 +158,6 @@ class HalfWegTrainer:
             traj = self._states_along(level, u, plan)
             ud = traj[min(len(traj), self.cfg.d) - 1] if traj else u
             uend = traj[-1] if traj else u
-            prefix_plan = list(plan[: self.cfg.d])
-
             self.opt.zero_grad()
 
             x_main = self._planner_input(level, u, v, b, r=None)
@@ -166,7 +167,7 @@ class HalfWegTrainer:
 
             x_ref = self._planner_input(level, u, ud, 0, r=None)
             logits_ref = self.ma(x_ref)[0]
-            y_ref = self._action_target(prefix_plan)
+            y_ref = self._action_target(plan)
             loss_ma_ref = self.ce(logits_ref, y_ref)
 
             loss_ms = torch.tensor(0.0, device=self.device)
