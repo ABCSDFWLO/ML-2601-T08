@@ -1,0 +1,103 @@
+ToDo:
+
+==========================================================
+
+fastrgv devlog:
+
+
+
+############################
+7feb26	Dlvd v1.0.2 : SF
+############################
+
+6feb26
+.) cleaned up some code by refactoring/consolidation.
+
+
+############################
+5feb26	Dlvd v1.0.1 : SF
+############################
+
+5feb26
+.) Solved! OSX needed a larger pthread-stack-size!
+
+2feb26
+.) added a fairly refined memory-check module "memory.hpp"
+	that applies to Windows, Linux, & OSX.
+.) now using _WIN64 compiler flag;
+.) added a skeleton "else" clause to compiler directives
+	to suggest a place for future additional platforms.
+.) ran test build on Win11: perfect.
+.) note: unable to run 2 or more cores on OSX.
+.) again: my changed marked with "fastrgv".
+
+
+27jan26
+.) delivered minimal change version to SourceForge.
+.) then added a well-written memory.hpp module that
+	works nicely for 3 OS's (did not deliver).
+
+22jan26
+.) src has been updated per Yaron Shoham's latest upload.
+.) I then editted to compile on osx & linux too.
+.) all my edits are preceeded by "fastrgv".
+.) Generally, osx & linux codes are the same but
+	my compiler directives are written to enable
+	differentiating between the two, in case it's needed.
+
+21jan26
+.) this festival compiles as-is on Windows, OSX, linux.
+	I get a few warnings on linux.
+	I get many warnings on OSX, whose compiler is
+	a little more fussy.
+.) obviously the compilation scripts need to be 
+	adjusted according to the compiler installation
+	directory.
+
+
+25nov23
+
+Had to reformat the compiler directives to include 3 options:
+OSX, MsWin, Linux.
+
+Note that the preferred compiler-directive choices seem to be
+
+_WIN32 || _WIN64			for Windows (1st: either; 2nd: 64 only)
+
+__linux__					for linux
+
+__APPLE__  &&  __MACH__	for OSX
+
+---------------------------------------------------------------
+
+Now, successfully compiles on 3 platforms without using any
+proprietary tools such as visual C++ or Xcode.
+
+On Windows I used the MINGW64 GNU C/C++ compiler.
+
+On OSX, I used the free & easy to install Ada compiler,
+that includes gcc, g++.
+
+On linux, the default GCC worked fine.
+
+Search for __linux__ to find all modified directives.
+...OR search for "fastrgv".
+
+TBD:
+	update util.cpp:get_number_of_cores so that it can be
+	greater than one for OSX
+	in case enough processors and memory are found.
+
+=============================================================
+#include <iostream>
+#include <sys/types.h>
+#include <sys/sysctl.h>
+
+int main() {
+    int numCores;
+    size_t size = sizeof(numCores);
+    sysctlbyname("hw.physicalcpu", &numCores, &size, NULL, 0);
+    std::cout << "Number of cores: " << numCores << std::endl;
+    return 0;
+}
+

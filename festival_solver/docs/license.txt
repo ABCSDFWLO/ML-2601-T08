@@ -1,0 +1,21 @@
+from email to sokoban group from Yaron Shoham 22nov23:
+
+link:
+https://festival-solver.site/
+-----------------------------------------------------------------------------------
+
+Hi,
+ 
+I have released the source code of Festival 3.1 .
+You can download it from the Festival site.
+ 
+See the README.txt file for compilation instructions and some code pointers.
+ 
+Be warned that the source code is very messy and undocumented. Festival was developed as a personal hobby project without the intention of releasing its code. I suspect that following the code will be very difficult for anyone else.
+ 
+The program is no longer maintained, so unfortunately these readability issues will not be fixed.
+ 
+As for copyright: If you use the code, please credit the program and its author.
+ 
+     Yaron
+ 

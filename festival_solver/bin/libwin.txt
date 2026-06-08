@@ -1,0 +1,6 @@
+
+This libwinpthread-1.dll is only used by linux
+when running the windows build
+festival.exe under wine.
+Otherwise, it is not needed.
+

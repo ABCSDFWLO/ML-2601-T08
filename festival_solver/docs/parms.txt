@@ -1,0 +1,26 @@
+
+festival_gnu infil.sok [options]
+
+command line options for festival
+
+...ones I need:
+
+-time f (sec)
+-cores i
+
+---------------others
+-extra_mem
+-alg
+-save_best
+-out_dir s
+-out_file s
+-level
+-from
+-to
+
+===================workingexample:
+
+festival_gnu 17.sok -out_dir ./output/ -cores 2 -time 60.0
+
+BUT the output directory must already exist.
+

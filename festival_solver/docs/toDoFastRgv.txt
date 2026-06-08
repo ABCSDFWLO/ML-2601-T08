@@ -1,0 +1,30 @@
+
+
+
+
+3feb26
+.) figure out how to restore the screen color...very annoying Done!
+
+27jan26
+.) need to fix segfault on OSX when trying to run
+	>1 cores. My only idea is this:
+	.) @ call to pthread_create, the 2nd parm is currently NULL,
+		but should be an attribute prepped as follows:
+
+	pthread_attr_t attr;
+
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+
+		then instead of "NULL" use "&attr".
+		...this did not help!
+
+
+
+17dec24
+
+I would like to try adding my 5th heuristic to festival.
+
+But it's probably much easier to replace the existing 4th.
+
+

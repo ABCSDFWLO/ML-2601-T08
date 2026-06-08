@@ -1,0 +1,360 @@
+In file included from stuck.h:2,
+                 from advanced_deadlock.cpp:19:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from advanced_deadlock.h:2,
+                 from advanced_deadlock.cpp:4:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from packing_search.h:1,
+                 from advisors.cpp:7:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from advisors.h:4,
+                 from advisors.cpp:3:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from stuck.h:2,
+                 from corral_deadlock.cpp:12:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from corral_deadlock.h:2,
+                 from corral_deadlock.cpp:3:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from cycle_deadlock.h:1,
+                 from cycle_deadlock.cpp:3:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from packing_search.h:1,
+                 from deadlock.cpp:11:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from deadlock.cpp:4:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from debug.h:1,
+                 from debug.cpp:8:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from perimeter.h:1,
+                 from dragonfly.cpp:12:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from score.h:6,
+                 from dragonfly.cpp:7:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from engine.cpp:6:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from packing_search.h:1,
+                 from fixed_boxes.cpp:7:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from fixed_boxes.h:2,
+                 from fixed_boxes.cpp:1:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from girl.h:1,
+                 from girl.cpp:5:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from greedy.h:1,
+                 from greedy.cpp:4:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from hf_search.h:2,
+                 from hf_search.cpp:4:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from score.h:6,
+                 from hf_search.h:1:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from park_order.h:6,
+                 from imagine.cpp:6:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from imagine.h:2,
+                 from imagine.cpp:4:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from max_dist.h:3,
+                 from max_dist.cpp:1:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from score.h:6,
+                 from max_dist.h:1:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from packing_search.h:1,
+                 from moves.cpp:11:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from moves.cpp:4:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from naive.h:1,
+                 from naive.cpp:1:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from park_order.h:6,
+                 from opener.cpp:7:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from opener.h:4,
+                 from opener.cpp:3:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from park_order.h:6,
+                 from overlap.cpp:2:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from overlap.h:2,
+                 from overlap.cpp:1:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from packing_search.h:1,
+                 from packing_search.cpp:6:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from park_order.h:6,
+                 from park_order.cpp:5:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from score.h:6,
+                 from request.h:4,
+                 from park_order.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from perimeter.h:1,
+                 from perimeter.cpp:10:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from queue.cpp:6:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from park_order.h:6,
+                 from score.cpp:10:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from score.h:6,
+                 from score.cpp:3:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from engine.h:2,
+                 from sokoban_solver.cpp:16:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from deadlock.h:2,
+                 from sokoban_solver.cpp:15:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from sol.h:2,
+                 from sol.cpp:9:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from stuck.h:2,
+                 from stuck.cpp:8:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
+In file included from tree.cpp:4:
+tree.h:15:14: warning: declaration of 'move move_hash_data::move' changes meaning of 'move' [-Wchanges-meaning]
+   15 |         move move;
+      |              ^~~~
+tree.h:15:9: note: used here to mean 'typedef struct move move'
+   15 |         move move;
+      |         ^~~~
+In file included from moves.h:4,
+                 from tree.h:5:
+helper.h:23:3: note: declared here
+   23 | } move;
+      |   ^~~~
