@@ -26,3 +26,7 @@ docker run --rm --gpus all -v "C:/Users/admin/Documents/ML-2601-T08:/workspace" 
 - Checkpoint: `checkpoints/halfweg_attempt04_micro200.pt`
 - 200 epochs completed successfully.
 - Loss converged to very low values, but `quick_solved` stayed at `0.000` for all epochs.
+
+## Evaluation
+- train: `solve_rate=0.0000` (0/8), `elapsed_sec=12.37`, `avg_sec_per_level=1.55`
+- valid: `solve_rate=0.0000` (0/8), `elapsed_sec=8.07`, `avg_sec_per_level=1.01`

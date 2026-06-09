@@ -29,8 +29,8 @@ docker run --rm --gpus all -v "C:/Users/admin/Documents/ML-2601-T08:/workspace" 
 ```
 
 ## Results
-- train: `solve_rate=0.0000` (0/8)
-- valid: `solve_rate=0.0000` (0/8)
+- train: `solve_rate=0.0000` (0/8), `elapsed_sec=8.39`, `avg_sec_per_level=1.05`
+- valid: `solve_rate=0.0000` (0/8), `elapsed_sec=8.34`, `avg_sec_per_level=1.04`
 
 ## Conclusion
 Reachable-trajectory supervision did not solve any sampled levels in the 50-epoch micro-benchmark.
