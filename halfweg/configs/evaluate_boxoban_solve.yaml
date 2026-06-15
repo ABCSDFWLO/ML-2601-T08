@@ -9,17 +9,17 @@ env:
   # levels: /home/excellent/ds/others/boxoban-levels/unfiltered/train
   # levels: /home/excellent/ds/others/boxoban-levels/unfiltered/valid
   # levels: /home/excellent/ds/others/boxoban-levels/unfiltered/test
-  levels: /home/excellent/ds/others/boxoban-levels/unfiltered/valid
+  levels: ../boxoban-levels/unfiltered/test
   # levels: /home/excellent/ds/others/boxoban-levels/unfiltered/valid/000.txt
 
 infra:
   sub_processes_cnt: 1
   threads_cnt: 10
-  device: gpu
+  device: cpu
   log: mem
 
 evaluate:
-  n_games_to_solve: 1000
+  n_games_to_solve: 1
   mem_max_episodes: 100000
   towards_or_away: 'towards'    # towards|away|both
   policies: 'last'             # last|all|pl0|pl1|...
