@@ -75,6 +75,84 @@ def _solve__one_shot(
     return plans
 
 
+def _compute_state_mismatch(curr_state: np.ndarray, target_state: np.ndarray) -> float:
+    # Use mean absolute difference to trigger replanning when execution drifts.
+    return float(np.mean(np.abs(curr_state - target_state)))
+
+
+def _solve__closed_loop_replan(
+        device,
+        start_envs: env_torch_wrapper.EnvsTensorList,
+        targets: list[torch.Tensor],
+        targets_np: list[np.ndarray],
+        policy: hw_policies.BasePolicy,
+        towards_or_away: bool,
+        AS: int,
+        n_max_episode_steps: int,
+        replan_every_actions: int,
+        replan_mismatch_threshold: float) -> list[list[np.ndarray]]:
+    assert len(targets) == len(start_envs)
+
+    plans = []
+
+    for game_i in range(len(targets)):
+        curr_targets_t = targets[game_i]
+        curr_targets_np = targets_np[game_i]
+
+        curr_plans = []
+
+        # Replanning is expensive; use a single representative target state per game.
+        target_i = 0
+        target_t = curr_targets_t[target_i:target_i+1]
+        target_np = curr_targets_np[target_i]
+
+        curr_env = start_envs.envs[game_i].copy()
+        executed_actions = []
+
+        while len(executed_actions) < n_max_episode_steps and not curr_env.done:
+            target_env = env_torch_wrapper.EnvsTensorList(states_t=target_t)
+            b = hw_common.get_b_array_from_towards_or_away(towards_or_away, cnt=1, device=device)
+            curr_s0_env = env_torch_wrapper.EnvsTensorList(envs=[curr_env])
+
+            plan_t = policy.get_plan_envs_to_envs(s0=curr_s0_env, target=target_env, b=b)
+            plan_np = plan_t[0].detach().cpu().numpy()
+
+            actions_taken_this_replan = 0
+            has_non_stop_action = False
+
+            for action in plan_np:
+                action = int(action)
+                if action == AS:
+                    break
+
+                has_non_stop_action = True
+                reward, done = curr_env.step(action)
+                executed_actions.append(action)
+                actions_taken_this_replan += 1
+
+                if reward == 1 or done or len(executed_actions) >= n_max_episode_steps:
+                    break
+
+                mismatch = _compute_state_mismatch(curr_env.get_model_input_s(), target_np)
+                if mismatch > replan_mismatch_threshold:
+                    break
+
+                if actions_taken_this_replan >= replan_every_actions:
+                    break
+
+            if not has_non_stop_action:
+                break
+
+            if curr_env.done or len(executed_actions) >= n_max_episode_steps:
+                break
+
+        curr_plans.append(np.array(executed_actions, dtype=np.int64))
+
+        plans.append(curr_plans)
+
+    return plans
+
+
 @torch.no_grad()
 def validate_puzzle_solving__impl(
         config: dict,
@@ -118,6 +196,23 @@ def validate_puzzle_solving__impl(
 
             if method == 'one_shot':
                 plans = _solve__one_shot(device, start_envs, targets_t, policy, towards_or_away)
+            elif method == 'closed_loop_replan':
+                replan_every_actions = int(config['evaluate'].get('replan_every_actions', 8))
+                replan_mismatch_threshold = float(config['evaluate'].get('replan_mismatch_threshold', 0.08))
+                n_max_episode_steps = int(config['env']['n_max_episode_steps'])
+
+                plans = _solve__closed_loop_replan(
+                    device=device,
+                    start_envs=start_envs,
+                    targets=targets_t,
+                    targets_np=targets_np,
+                    policy=policy,
+                    towards_or_away=towards_or_away,
+                    AS=AS,
+                    n_max_episode_steps=n_max_episode_steps,
+                    replan_every_actions=replan_every_actions,
+                    replan_mismatch_threshold=replan_mismatch_threshold,
+                )
             else:
                 raise Exception(f"Unknown validation method `{method}`")
 
