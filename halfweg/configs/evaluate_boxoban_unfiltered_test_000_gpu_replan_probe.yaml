@@ -1,4 +1,4 @@
-name: 'Evaluate current checkpoint on boxoban unfiltered test 000 (replan quick)'
+name: 'Evaluate checkpoint on boxoban unfiltered test 000 (replan probe)'
 cmd: 'evaluate'
 env:
   name: boxoban
@@ -12,7 +12,7 @@ infra:
   log: mem
 
 evaluate:
-  n_games_to_solve: 100
+  n_games_to_solve: 20
   mem_max_episodes: 100000
   towards_or_away: 'towards'
   policies: 'last'

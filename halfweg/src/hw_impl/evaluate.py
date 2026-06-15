@@ -76,7 +76,11 @@ def _solve__one_shot(
 
 
 def _compute_state_mismatch(curr_state: np.ndarray, target_state: np.ndarray) -> float:
-    # Use mean absolute difference to trigger replanning when execution drifts.
+    # Replanning mismatch is box-centric to avoid overreacting to player micro-position drift.
+    if curr_state.shape[0] > 2 and target_state.shape[0] > 2:
+        curr_boxes = curr_state[2]
+        target_boxes = target_state[2]
+        return float(np.mean(np.abs(curr_boxes - target_boxes)))
     return float(np.mean(np.abs(curr_state - target_state)))
 
 
@@ -90,7 +94,8 @@ def _solve__closed_loop_replan(
         AS: int,
         n_max_episode_steps: int,
         replan_every_actions: int,
-        replan_mismatch_threshold: float) -> list[list[np.ndarray]]:
+        replan_mismatch_threshold: float,
+        replan_stall_steps: int) -> list[list[np.ndarray]]:
     assert len(targets) == len(start_envs)
 
     plans = []
@@ -101,52 +106,68 @@ def _solve__closed_loop_replan(
 
         curr_plans = []
 
-        # Replanning is expensive; use a single representative target state per game.
-        target_i = 0
-        target_t = curr_targets_t[target_i:target_i+1]
-        target_np = curr_targets_np[target_i]
+        for target_i in range(len(curr_targets_t)):
+            target_t = curr_targets_t[target_i:target_i+1]
+            target_np = curr_targets_np[target_i]
 
-        curr_env = start_envs.envs[game_i].copy()
-        executed_actions = []
+            curr_env = start_envs.envs[game_i].copy()
+            executed_actions = []
 
-        while len(executed_actions) < n_max_episode_steps and not curr_env.done:
-            target_env = env_torch_wrapper.EnvsTensorList(states_t=target_t)
-            b = hw_common.get_b_array_from_towards_or_away(towards_or_away, cnt=1, device=device)
-            curr_s0_env = env_torch_wrapper.EnvsTensorList(envs=[curr_env])
+            curr_state = curr_env.get_model_input_s()
+            prev_box_state = curr_state[2].copy() if curr_state.shape[0] > 2 else None
+            steps_without_box_change = 0
 
-            plan_t = policy.get_plan_envs_to_envs(s0=curr_s0_env, target=target_env, b=b)
-            plan_np = plan_t[0].detach().cpu().numpy()
+            while len(executed_actions) < n_max_episode_steps and not curr_env.done:
+                target_env = env_torch_wrapper.EnvsTensorList(states_t=target_t)
+                b = hw_common.get_b_array_from_towards_or_away(towards_or_away, cnt=1, device=device)
+                curr_s0_env = env_torch_wrapper.EnvsTensorList(envs=[curr_env])
 
-            actions_taken_this_replan = 0
-            has_non_stop_action = False
+                plan_t = policy.get_plan_envs_to_envs(s0=curr_s0_env, target=target_env, b=b)
+                plan_np = plan_t[0].detach().cpu().numpy()
 
-            for action in plan_np:
-                action = int(action)
-                if action == AS:
+                actions_taken_this_replan = 0
+                has_non_stop_action = False
+
+                for action in plan_np:
+                    action = int(action)
+                    if action == AS:
+                        break
+
+                    has_non_stop_action = True
+                    reward, done = curr_env.step(action)
+                    executed_actions.append(action)
+                    actions_taken_this_replan += 1
+
+                    if reward == 1 or done or len(executed_actions) >= n_max_episode_steps:
+                        break
+
+                    curr_state = curr_env.get_model_input_s()
+                    mismatch = _compute_state_mismatch(curr_state, target_np)
+
+                    if prev_box_state is not None:
+                        curr_box_state = curr_state[2]
+                        if np.array_equal(curr_box_state, prev_box_state):
+                            steps_without_box_change += 1
+                        else:
+                            steps_without_box_change = 0
+                            prev_box_state = curr_box_state.copy()
+
+                    if mismatch > replan_mismatch_threshold:
+                        break
+
+                    if replan_stall_steps > 0 and steps_without_box_change >= replan_stall_steps:
+                        break
+
+                    if replan_every_actions > 0 and actions_taken_this_replan >= replan_every_actions:
+                        break
+
+                if not has_non_stop_action:
                     break
 
-                has_non_stop_action = True
-                reward, done = curr_env.step(action)
-                executed_actions.append(action)
-                actions_taken_this_replan += 1
-
-                if reward == 1 or done or len(executed_actions) >= n_max_episode_steps:
+                if curr_env.done or len(executed_actions) >= n_max_episode_steps:
                     break
 
-                mismatch = _compute_state_mismatch(curr_env.get_model_input_s(), target_np)
-                if mismatch > replan_mismatch_threshold:
-                    break
-
-                if actions_taken_this_replan >= replan_every_actions:
-                    break
-
-            if not has_non_stop_action:
-                break
-
-            if curr_env.done or len(executed_actions) >= n_max_episode_steps:
-                break
-
-        curr_plans.append(np.array(executed_actions, dtype=np.int64))
+            curr_plans.append(np.array(executed_actions, dtype=np.int64))
 
         plans.append(curr_plans)
 
@@ -199,6 +220,7 @@ def validate_puzzle_solving__impl(
             elif method == 'closed_loop_replan':
                 replan_every_actions = int(config['evaluate'].get('replan_every_actions', 8))
                 replan_mismatch_threshold = float(config['evaluate'].get('replan_mismatch_threshold', 0.08))
+                replan_stall_steps = int(config['evaluate'].get('replan_stall_steps', 10))
                 n_max_episode_steps = int(config['env']['n_max_episode_steps'])
 
                 plans = _solve__closed_loop_replan(
@@ -212,6 +234,7 @@ def validate_puzzle_solving__impl(
                     n_max_episode_steps=n_max_episode_steps,
                     replan_every_actions=replan_every_actions,
                     replan_mismatch_threshold=replan_mismatch_threshold,
+                    replan_stall_steps=replan_stall_steps,
                 )
             else:
                 raise Exception(f"Unknown validation method `{method}`")
