@@ -1,9 +1,13 @@
 from collections import Counter, defaultdict
-import resource
 import time
 import numpy as np
 import torch
 from torch.utils.tensorboard import SummaryWriter
+
+try:
+    import resource
+except ImportError:
+    resource = None
 
 
 #################### Logging
@@ -123,7 +127,10 @@ def print_encoding(name: str, inp: np.ndarray):
 #################### Measure footprint
 
 def get_mem_size():
-    usage=resource.getrusage(resource.RUSAGE_SELF)
+    if resource is None:
+        return 0
+
+    usage = resource.getrusage(resource.RUSAGE_SELF)
     return usage[2]
 
 

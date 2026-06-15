@@ -1,0 +1,30 @@
+﻿              'method': 'one_shot',
+              'n_games_to_solve': 10,
+              'policies': 'last',
+              'targets': 'all',
+              'towards_or_away': 'towards'},
+ 'infra': {'device': 'cpu',
+           'log': 'mem',
+           'sub_processes_cnt': 1,
+           'threads_cnt': 10},
+ 'model': {'PLHW': {'batch_size': 128,
+                    'class': 'Sokoban_PLHW_v4_1010',
+                    'learning_rate': 0.003,
+                    'weight_decay': 0},
+           'PLTA': {'batch_size': 128,
+                    'class': 'Sokoban_PLTA_v4_1010',
+                    'learning_rate': 0.003,
+                    'weight_decay': 0},
+           'checkpoint': 'trained_models/boxoban_vast_v4_finetuned_gpu_shortcmp.ckpt'},
+ 'name': 'Evaluate finetuned model on boxoban test'}
+Models loaded from checkpoints: PLTA, PLHW
+Loaded checkpoint content from `trained_models/boxoban_vast_v4_finetuned_gpu_shortcmp.ckpt`:
+Iteration 0
+[MODEL_KEEPER] Models: PLTA: Sokoban_PLTA_v4_1010 Params cnt: 1128404
+[MODEL_KEEPER] Models: PLHW: Sokoban_PLHW_v4_1010 Params cnt: 1013284
+[MODEL_KEEPER] Optimizers: PLTA, PLHW
+{'method': 'one_shot', 'towards_or_away': True, 'policy': 'Policy5 (layer_idx=6)', 'solved_mean': np.float64(0.0), 'mse_mean': np.float64(8.870350956533443), 'games_cnt': 10, 'proposed_plan_length_mean': np.float64(23.878995433789953), 'solved_plan_length_mean': 'None'}
+Checkpoint loaded      1.37686 sec            0 kb   
+Envs loaded            5.65837 sec            0 kb   
+Pre-solve                4e-05 sec            0 kb   
+Solving               47.71328 sec            0 kb   

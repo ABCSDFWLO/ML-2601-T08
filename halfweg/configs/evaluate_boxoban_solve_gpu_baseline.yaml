@@ -12,7 +12,7 @@ infra:
   log: mem
 
 evaluate:
-  n_games_to_solve: 10
+  n_games_to_solve: 50
   mem_max_episodes: 100000
   towards_or_away: 'towards'
   policies: 'last'

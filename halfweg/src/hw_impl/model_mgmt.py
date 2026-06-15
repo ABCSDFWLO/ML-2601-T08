@@ -70,7 +70,7 @@ class ModelKeeper:
             helpers.optimizer_to(optimizer, device)
 
     def load_from_checkpoint(self, checkpoint_path: str):
-        data = torch.load(checkpoint_path, weights_only=False)
+        data = torch.load(checkpoint_path, weights_only=False, map_location='cpu')
 
         for name, model_state in data['models'].items():
             if name in self.models:
