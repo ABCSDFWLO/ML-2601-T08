@@ -95,18 +95,23 @@ def _solve__closed_loop_replan(
         n_max_episode_steps: int,
         replan_every_actions: int,
         replan_mismatch_threshold: float,
-        replan_stall_steps: int) -> list[list[np.ndarray]]:
+        replan_stall_steps: int,
+        min_commit_steps: int,
+        progress_every_targets: int) -> list[list[np.ndarray]]:
     assert len(targets) == len(start_envs)
 
     plans = []
 
     for game_i in range(len(targets)):
+        print(f">>> [Replan] Planning Game {game_i + 1}/{len(targets)}", flush=True)
         curr_targets_t = targets[game_i]
         curr_targets_np = targets_np[game_i]
 
         curr_plans = []
 
         for target_i in range(len(curr_targets_t)):
+            if progress_every_targets > 0 and (target_i % progress_every_targets == 0):
+                print(f">>> [Replan] Game {game_i + 1}: target {target_i + 1}/{len(curr_targets_t)}", flush=True)
             target_t = curr_targets_t[target_i:target_i+1]
             target_np = curr_targets_np[target_i]
 
@@ -151,6 +156,10 @@ def _solve__closed_loop_replan(
                         else:
                             steps_without_box_change = 0
                             prev_box_state = curr_box_state.copy()
+
+                    # Keep a short commitment window to avoid excessive replan calls.
+                    if actions_taken_this_replan < min_commit_steps:
+                        continue
 
                     if mismatch > replan_mismatch_threshold:
                         break
@@ -221,6 +230,8 @@ def validate_puzzle_solving__impl(
                 replan_every_actions = int(config['evaluate'].get('replan_every_actions', 8))
                 replan_mismatch_threshold = float(config['evaluate'].get('replan_mismatch_threshold', 0.08))
                 replan_stall_steps = int(config['evaluate'].get('replan_stall_steps', 10))
+                min_commit_steps = int(config['evaluate'].get('min_commit_steps', 4))
+                progress_every_targets = int(config['evaluate'].get('progress_every_targets', 50))
                 n_max_episode_steps = int(config['env']['n_max_episode_steps'])
 
                 plans = _solve__closed_loop_replan(
@@ -235,11 +246,16 @@ def validate_puzzle_solving__impl(
                     replan_every_actions=replan_every_actions,
                     replan_mismatch_threshold=replan_mismatch_threshold,
                     replan_stall_steps=replan_stall_steps,
+                    min_commit_steps=min_commit_steps,
+                    progress_every_targets=progress_every_targets,
                 )
             else:
                 raise Exception(f"Unknown validation method `{method}`")
 
+            progress_every_games = int(config['evaluate'].get('progress_every_games', 1))
             for game_i in range(len(games_to_solve)):
+                if progress_every_games > 0 and (game_i % progress_every_games == 0):
+                    print(f">>> [Progress] Processing Game {game_i + 1}/{len(games_to_solve)}", flush=True)
                 curr_plans = plans[game_i]
 
                 stat_n_solutions.append(len(curr_plans))

@@ -1,4 +1,4 @@
-name: 'Evaluate checkpoint on boxoban unfiltered test 000 (replan tiny)'
+name: 'Evaluate checkpoint on boxoban unfiltered test 000 (replan onegame)'
 cmd: 'evaluate'
 env:
   name: boxoban
@@ -12,7 +12,7 @@ infra:
   log: mem
 
 evaluate:
-  n_games_to_solve: 5
+  n_games_to_solve: 1
   mem_max_episodes: 100000
   towards_or_away: 'towards'
   policies: 'last'
@@ -23,6 +23,7 @@ evaluate:
   replan_stall_steps: 10
   min_commit_steps: 4
   progress_every_games: 1
+  progress_every_targets: 10
 
 model:
   PLTA:
