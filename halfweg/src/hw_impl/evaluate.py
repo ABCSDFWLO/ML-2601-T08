@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import environments
 from environments import env_base
+from environments.sokoban.sokoban_env import CHANNEL_BOX, CHANNEL_GOAL, DIRECTIONS
 import helpers
 from hw_impl import env_torch_wrapper, hw_common, hw_experience_replay, hw_policies, model_mgmt
 
@@ -53,7 +54,7 @@ def _solve__one_shot(
         start_envs: env_torch_wrapper.EnvsTensorList,
         targets: list[torch.Tensor],
         policy: hw_policies.BasePolicy,
-        towards_or_away: bool) -> list[list[np.ndarray]]:
+        towards_or_away: bool) -> tuple[list[list[np.ndarray]], list[dict]]:
     assert len(targets) == len(start_envs)
 
     plans = []
@@ -72,7 +73,8 @@ def _solve__one_shot(
 
         plans.append(curr_plans)
 
-    return plans
+    game_stats = [{} for _ in range(len(targets))]
+    return plans, game_stats
 
 
 def _compute_state_mismatch(curr_state: np.ndarray, target_state: np.ndarray) -> float:
@@ -97,10 +99,11 @@ def _solve__closed_loop_replan(
         replan_mismatch_threshold: float,
         replan_stall_steps: int,
         min_commit_steps: int,
-        progress_every_targets: int) -> list[list[np.ndarray]]:
+        progress_every_targets: int) -> tuple[list[list[np.ndarray]], list[dict]]:
     assert len(targets) == len(start_envs)
 
     plans = []
+    game_stats = []
 
     for game_i in range(len(targets)):
         print(f">>> [Replan] Planning Game {game_i + 1}/{len(targets)}", flush=True)
@@ -108,6 +111,9 @@ def _solve__closed_loop_replan(
         curr_targets_np = targets_np[game_i]
 
         curr_plans = []
+        target_replan_counts = []
+        target_box_push_counts = []
+        target_timed_outs = []
 
         for target_i in range(len(curr_targets_t)):
             if progress_every_targets > 0 and (target_i % progress_every_targets == 0):
@@ -122,6 +128,9 @@ def _solve__closed_loop_replan(
             prev_box_state = curr_state[2].copy() if curr_state.shape[0] > 2 else None
             steps_without_box_change = 0
 
+            replan_count = 0
+            box_push_count = 0
+
             while len(executed_actions) < n_max_episode_steps and not curr_env.done:
                 target_env = env_torch_wrapper.EnvsTensorList(states_t=target_t)
                 b = hw_common.get_b_array_from_towards_or_away(towards_or_away, cnt=1, device=device)
@@ -129,6 +138,7 @@ def _solve__closed_loop_replan(
 
                 plan_t = policy.get_plan_envs_to_envs(s0=curr_s0_env, target=target_env, b=b)
                 plan_np = plan_t[0].detach().cpu().numpy()
+                replan_count += 1
 
                 actions_taken_this_replan = 0
                 has_non_stop_action = False
@@ -139,6 +149,17 @@ def _solve__closed_loop_replan(
                         break
 
                     has_non_stop_action = True
+
+                    # Detect box push before stepping
+                    if 0 <= action < 4:
+                        dr, dc = DIRECTIONS[action]
+                        nr = curr_env.player_row + dr
+                        nc = curr_env.player_col + dc
+                        board = curr_env.board
+                        if 0 <= nr < board.shape[1] and 0 <= nc < board.shape[2]:
+                            if board[CHANNEL_BOX, nr, nc] == 1:
+                                box_push_count += 1
+
                     reward, done = curr_env.step(action)
                     executed_actions.append(action)
                     actions_taken_this_replan += 1
@@ -176,11 +197,20 @@ def _solve__closed_loop_replan(
                 if curr_env.done or len(executed_actions) >= n_max_episode_steps:
                     break
 
+            timed_out = (len(executed_actions) >= n_max_episode_steps) and not curr_env.done
             curr_plans.append(np.array(executed_actions, dtype=np.int64))
+            target_replan_counts.append(replan_count)
+            target_box_push_counts.append(box_push_count)
+            target_timed_outs.append(timed_out)
 
         plans.append(curr_plans)
+        game_stats.append({
+            'replan_counts': target_replan_counts,
+            'box_push_counts': target_box_push_counts,
+            'timed_outs': target_timed_outs,
+        })
 
-    return plans
+    return plans, game_stats
 
 
 @torch.no_grad()
@@ -213,6 +243,8 @@ def validate_puzzle_solving__impl(
 
     AS = model_keeper.models['PLTA'].AS
 
+    all_results = []
+
     for policy in policies:
         stat_navigation_mse = dict()
 
@@ -223,9 +255,13 @@ def validate_puzzle_solving__impl(
             stat_n_solutions = []
             stat_mse = []
             stat_solved = []
+            stat_replan_counts = []
+            stat_box_push_counts = []
+            stat_timed_out = []
+            stat_partial_progress_unsolved = []
 
             if method == 'one_shot':
-                plans = _solve__one_shot(device, start_envs, targets_t, policy, towards_or_away)
+                plans, game_stats = _solve__one_shot(device, start_envs, targets_t, policy, towards_or_away)
             elif method == 'closed_loop_replan':
                 replan_every_actions = int(config['evaluate'].get('replan_every_actions', 8))
                 replan_mismatch_threshold = float(config['evaluate'].get('replan_mismatch_threshold', 0.08))
@@ -234,7 +270,7 @@ def validate_puzzle_solving__impl(
                 progress_every_targets = int(config['evaluate'].get('progress_every_targets', 50))
                 n_max_episode_steps = int(config['env']['n_max_episode_steps'])
 
-                plans = _solve__closed_loop_replan(
+                plans, game_stats = _solve__closed_loop_replan(
                     device=device,
                     start_envs=start_envs,
                     targets=targets_t,
@@ -257,16 +293,24 @@ def validate_puzzle_solving__impl(
                 if progress_every_games > 0 and (game_i % progress_every_games == 0):
                     print(f">>> [Progress] Processing Game {game_i + 1}/{len(games_to_solve)}", flush=True)
                 curr_plans = plans[game_i]
+                g_stats = game_stats[game_i]
 
                 stat_n_solutions.append(len(curr_plans))
                 solution_plan = None
 
-                for curr_plan in curr_plans:
+                for target_i, curr_plan in enumerate(curr_plans):
                     copy_env = start_envs.envs[game_i].copy()
                     reward, done = copy_env.play_plan_1d(curr_plan, AS)
 
                     stat_proposed_plan_lengths.append(len(curr_plan))
                     stat_mse.append(np.sum(np.abs(np.expand_dims(copy_env.get_model_input_s(), 0) - targets_np[game_i])) / len(targets_np[game_i]))
+
+                    if g_stats.get('replan_counts'):
+                        stat_replan_counts.append(g_stats['replan_counts'][target_i] if target_i < len(g_stats['replan_counts']) else 0)
+                    if g_stats.get('box_push_counts'):
+                        stat_box_push_counts.append(g_stats['box_push_counts'][target_i] if target_i < len(g_stats['box_push_counts']) else 0)
+                    if g_stats.get('timed_outs'):
+                        stat_timed_out.append(int(g_stats['timed_outs'][target_i]) if target_i < len(g_stats['timed_outs']) else 0)
 
                     if reward == 1:
                         solution_plan = curr_plan.copy()
@@ -276,26 +320,48 @@ def validate_puzzle_solving__impl(
                     stat_solved.append(1)
                 else:
                     stat_solved.append(0)
+                    # Partial progress: boxes on goals at final state of best (last) plan
+                    if curr_plans:
+                        last_env = start_envs.envs[game_i].copy()
+                        last_env.play_plan_1d(curr_plans[-1], AS)
+                        board = last_env.get_model_input_s()
+                        total_boxes = int(np.sum(board[CHANNEL_BOX]))
+                        boxes_on_goals = int(np.sum(board[CHANNEL_BOX] * board[CHANNEL_GOAL]))
+                        partial = boxes_on_goals / total_boxes if total_boxes > 0 else 0.0
+                        stat_partial_progress_unsolved.append(partial)
 
             stat_navigation_mse[towards_or_away] = np.mean(stat_mse)
+
+            def _pct(arr, q):
+                return float(np.percentile(arr, q)) if arr else float('nan')
 
             validation_result = {
                 'method': method,
                 'towards_or_away': towards_or_away,
                 'policy': str(policy),
-                'solved_mean': np.mean(stat_solved),
-                'mse_mean': np.mean(stat_mse),
                 'games_cnt': len(stat_solved),
-                'proposed_plan_length_mean': np.mean(stat_proposed_plan_lengths),
-                'solved_plan_length_mean': np.mean(stat_solved_plan_lengths) if stat_solved_plan_lengths else 'None',
+                'solved_mean': float(np.mean(stat_solved)),
+                'solved_count': int(np.sum(stat_solved)),
+                'timeout_rate': float(np.mean(stat_timed_out)) if stat_timed_out else 'n/a',
+                'mse_mean': float(np.mean(stat_mse)),
+                'proposed_plan_length_mean': float(np.mean(stat_proposed_plan_lengths)),
+                'solved_plan_length_mean': float(np.mean(stat_solved_plan_lengths)) if stat_solved_plan_lengths else 'None',
+                'solved_plan_length_p50': _pct(stat_solved_plan_lengths, 50),
+                'solved_plan_length_p90': _pct(stat_solved_plan_lengths, 90),
+                'avg_replan_count': float(np.mean(stat_replan_counts)) if stat_replan_counts else 'n/a',
+                'avg_box_push_count': float(np.mean(stat_box_push_counts)) if stat_box_push_counts else 'n/a',
+                'partial_progress_unsolved_mean': float(np.mean(stat_partial_progress_unsolved)) if stat_partial_progress_unsolved else 'n/a',
             }
             pprint.pprint(validation_result, width=10000, sort_dicts=False)
+            all_results.append(validation_result)
 
             if tensorboard is not None and towards_or_away:
                 tensorboard.append_scalar(f"{str(policy)} solved mean", np.mean(stat_solved))
 
         if tensorboard is not None and True in stat_navigation_mse and False in stat_navigation_mse:
             tensorboard.append_scalar(f"{str(policy)} navigation spread", stat_navigation_mse[False] - stat_navigation_mse[True])
+
+    return all_results
 
 
 def go_evaluate(config, device):
