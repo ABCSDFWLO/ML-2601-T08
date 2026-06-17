@@ -33,6 +33,8 @@ from huggingface_hub import snapshot_download
 
 warnings.filterwarnings("ignore")
 
+MAX_EPISODE_STEPS = 240
+
 # (parse_boxoban_file, setup_isolated_env 함수는 이전 코드와 동일하게 유지)
 def parse_boxoban_file(filepath):
     with open(filepath, 'r') as f: content = f.read()
@@ -97,7 +99,7 @@ def main():
 
     print("[Daemon] Loading model to memory...")
     model_path = Path("/home/dev/.cache/huggingface/hub/models--AlignmentResearch--learned-planner/snapshots/6aa0cb55c7194eae7a032889e10932149224bad7/drc33/bkynosqi/cp_2002944000")
-    dummy_cfg = BoxobanConfig(max_episode_steps=120, split='train', num_envs=1, tinyworld_obs=True)
+    dummy_cfg = BoxobanConfig(max_episode_steps=MAX_EPISODE_STEPS, split='train', num_envs=1, tinyworld_obs=True)
     cfg, policy = load_jax_model_to_torch(model_path, dummy_cfg)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     policy = policy.to(device)
@@ -137,7 +139,7 @@ def main():
                 if map_key in results_data.get("data", {}): continue
 
                 isolated_cache = setup_isolated_env(map_content)
-                env_cfg = BoxobanConfig(max_episode_steps=120, split='train', num_envs=1, tinyworld_obs=True, cache_path=Path(isolated_cache))
+                env_cfg = BoxobanConfig(max_episode_steps=MAX_EPISODE_STEPS, split='train', num_envs=1, tinyworld_obs=True, cache_path=Path(isolated_cache))
                 
                 try:
                     env = env_cfg.make()
@@ -158,7 +160,7 @@ def main():
 
                 # 2. 추론 루프 진입
                 with torch.no_grad():
-                    while not done and step_count < 120:
+                    while not done and step_count < MAX_EPISODE_STEPSs:
                         obs_tensor = torch.tensor(obs, dtype=torch.float32).to(device) / 255.0
                         
                         t0 = time.perf_counter()
@@ -178,7 +180,9 @@ def main():
                         obs, reward, terminated, truncated, info = env.step(action)
                         episode_starts = torch.zeros((1,), dtype=torch.bool).to(device)
 
-                        if reward[0] > 0: solved = True
+                        if reward[0] > 5.0 or info.get('all_boxes_on_target', False) or info.get('is_success', False):
+                            solved = True
+                            
                         done = terminated[0] or truncated[0]
                         step_count += 1
                 env.close()

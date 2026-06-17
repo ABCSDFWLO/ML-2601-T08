@@ -3,12 +3,12 @@
         "testsokoban.txt_map_000": {
             "status": "success",
             "steps": 4,
-            "inference_time_ms": 36.47626099882473,
-            "total_system_time_ms": 79.23209199907433,
+            "inference_time_ms": 56.0012129972165,
+            "total_system_time_ms": 99.14660999857006,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 0.012151519998951699,
+                    "forward_time": 0.017005419002089184,
                     "action": "R",
                     "policy_logits": [
                         -2.047409772872925,
@@ -20,7 +20,7 @@
                 },
                 {
                     "step": 2,
-                    "forward_time": 0.008073824999883072,
+                    "forward_time": 0.013723616997594945,
                     "action": "R",
                     "policy_logits": [
                         -1.2770719528198242,
@@ -32,7 +32,7 @@
                 },
                 {
                     "step": 3,
-                    "forward_time": 0.008262207000370836,
+                    "forward_time": 0.01753610000014305,
                     "action": "R",
                     "policy_logits": [
                         -1.2702940702438354,
@@ -44,7 +44,7 @@
                 },
                 {
                     "step": 4,
-                    "forward_time": 0.00798870899961912,
+                    "forward_time": 0.007736076997389318,
                     "action": "R",
                     "policy_logits": [
                         -1.3575211763381958,
@@ -59,12 +59,12 @@
         "testsokoban.txt_map_001": {
             "status": "success",
             "steps": 38,
-            "inference_time_ms": 437.3388160001923,
-            "total_system_time_ms": 548.018912999396,
+            "inference_time_ms": 558.1985349890601,
+            "total_system_time_ms": 668.6507160011388,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 0.01458806899972842,
+                    "forward_time": 0.011520289997861255,
                     "action": "R",
                     "policy_logits": [
                         -1.282483696937561,
@@ -76,7 +76,7 @@
                 },
                 {
                     "step": 2,
-                    "forward_time": 0.00880233399948338,
+                    "forward_time": 0.024594884998805355,
                     "action": "R",
                     "policy_logits": [
                         -1.1717958450317383,
@@ -88,7 +88,7 @@
                 },
                 {
                     "step": 3,
-                    "forward_time": 0.00828654699944309,
+                    "forward_time": 0.00807881500077201,
                     "action": "U",
                     "policy_logits": [
                         3.675856590270996,
@@ -100,7 +100,7 @@
                 },
                 {
                     "step": 4,
-                    "forward_time": 0.00806935799846542,
+                    "forward_time": 0.007942977001221152,
                     "action": "R",
                     "policy_logits": [
                         -0.9361969828605652,
@@ -112,7 +112,7 @@
                 },
                 {
                     "step": 5,
-                    "forward_time": 0.008041177001359756,
+                    "forward_time": 0.00819139299710514,
                     "action": "D",
                     "policy_logits": [
                         -1.192187786102295,
@@ -124,7 +124,7 @@
                 },
                 {
                     "step": 6,
-                    "forward_time": 0.008304408000185504,
+                    "forward_time": 0.008111308998195454,
                     "action": "U",
                     "policy_logits": [
                         3.1050186157226562,
@@ -136,7 +136,7 @@
                 },
                 {
                     "step": 7,
-                    "forward_time": 0.007997262999197119,
+                    "forward_time": 0.023427047999575734,
                     "action": "L",
                     "policy_logits": [
                         1.1069166660308838,
@@ -148,7 +148,7 @@
                 },
                 {
                     "step": 8,
-                    "forward_time": 0.008112827999866568,
+                    "forward_time": 0.029009124998992775,
                     "action": "U",
                     "policy_logits": [
                         3.520116090774536,
@@ -160,7 +160,7 @@
                 },
                 {
                     "step": 9,
-                    "forward_time": 0.008243469999797526,
+                    "forward_time": 0.008009141001821263,
                     "action": "U",
                     "policy_logits": [
                         3.543332099914551,
@@ -172,7 +172,7 @@
                 },
                 {
                     "step": 10,
-                    "forward_time": 0.008076483998593176,
+                    "forward_time": 0.022548788001586217,
                     "action": "U",
                     "policy_logits": [
                         3.925368309020996,
@@ -184,7 +184,7 @@
                 },
                 {
                     "step": 11,
-                    "forward_time": 0.007944572000269545,
+                    "forward_time": 0.02942891099883127,
                     "action": "L",
                     "policy_logits": [
                         -0.9463912844657898,
@@ -196,7 +196,7 @@
                 },
                 {
                     "step": 12,
-                    "forward_time": 0.0284924770003272,
+                    "forward_time": 0.008131623999361182,
                     "action": "L",
                     "policy_logits": [
                         -1.1301758289337158,
@@ -208,7 +208,7 @@
                 },
                 {
                     "step": 13,
-                    "forward_time": 0.008363491999261896,
+                    "forward_time": 0.022215921999304555,
                     "action": "D",
                     "policy_logits": [
                         -1.1477293968200684,
@@ -220,7 +220,7 @@
                 },
                 {
                     "step": 14,
-                    "forward_time": 0.00820755900167569,
+                    "forward_time": 0.02965469799892162,
                     "action": "L",
                     "policy_logits": [
                         -1.0609965324401855,
@@ -232,7 +232,7 @@
                 },
                 {
                     "step": 15,
-                    "forward_time": 0.023241322000103537,
+                    "forward_time": 0.02362022600209457,
                     "action": "U",
                     "policy_logits": [
                         3.5708537101745605,
@@ -244,7 +244,7 @@
                 },
                 {
                     "step": 16,
-                    "forward_time": 0.00826579699969443,
+                    "forward_time": 0.023716069001238793,
                     "action": "L",
                     "policy_logits": [
                         -1.2037081718444824,
@@ -256,7 +256,7 @@
                 },
                 {
                     "step": 17,
-                    "forward_time": 0.00810145899959025,
+                    "forward_time": 0.007876370000303723,
                     "action": "D",
                     "policy_logits": [
                         -1.360978126525879,
@@ -268,7 +268,7 @@
                 },
                 {
                     "step": 18,
-                    "forward_time": 0.007995644000402535,
+                    "forward_time": 0.007886629002314294,
                     "action": "L",
                     "policy_logits": [
                         -1.3670368194580078,
@@ -280,7 +280,7 @@
                 },
                 {
                     "step": 19,
-                    "forward_time": 0.007793169999786187,
+                    "forward_time": 0.007955236000270816,
                     "action": "U",
                     "policy_logits": [
                         3.5699079036712646,
@@ -292,7 +292,7 @@
                 },
                 {
                     "step": 20,
-                    "forward_time": 0.02284225299990794,
+                    "forward_time": 0.023422199999913573,
                     "action": "R",
                     "policy_logits": [
                         -1.8981716632843018,
@@ -304,7 +304,7 @@
                 },
                 {
                     "step": 21,
-                    "forward_time": 0.025948492999305017,
+                    "forward_time": 0.008676970999658806,
                     "action": "R",
                     "policy_logits": [
                         -1.1746234893798828,
@@ -316,7 +316,7 @@
                 },
                 {
                     "step": 22,
-                    "forward_time": 0.017487821000031545,
+                    "forward_time": 0.007624576002854155,
                     "action": "U",
                     "policy_logits": [
                         3.781005859375,
@@ -328,7 +328,7 @@
                 },
                 {
                     "step": 23,
-                    "forward_time": 0.014258622000852483,
+                    "forward_time": 0.007707021999522112,
                     "action": "R",
                     "policy_logits": [
                         -1.0872671604156494,
@@ -340,7 +340,7 @@
                 },
                 {
                     "step": 24,
-                    "forward_time": 0.008194865000405116,
+                    "forward_time": 0.02997442799824057,
                     "action": "U",
                     "policy_logits": [
                         3.794210433959961,
@@ -352,7 +352,7 @@
                 },
                 {
                     "step": 25,
-                    "forward_time": 0.008126802000333555,
+                    "forward_time": 0.029237069997179788,
                     "action": "L",
                     "policy_logits": [
                         -1.0225601196289062,
@@ -364,7 +364,7 @@
                 },
                 {
                     "step": 26,
-                    "forward_time": 0.008231591000367189,
+                    "forward_time": 0.011809247997007333,
                     "action": "L",
                     "policy_logits": [
                         -1.0355684757232666,
@@ -376,7 +376,7 @@
                 },
                 {
                     "step": 27,
-                    "forward_time": 0.008664670998768997,
+                    "forward_time": 0.029499902000679867,
                     "action": "D",
                     "policy_logits": [
                         -0.9943380951881409,
@@ -388,7 +388,7 @@
                 },
                 {
                     "step": 28,
-                    "forward_time": 0.009510760999546619,
+                    "forward_time": 0.018531890997110168,
                     "action": "R",
                     "policy_logits": [
                         -1.2716374397277832,
@@ -400,7 +400,7 @@
                 },
                 {
                     "step": 29,
-                    "forward_time": 0.009004691999507486,
+                    "forward_time": 0.008774695001193322,
                     "action": "D",
                     "policy_logits": [
                         -1.744899034500122,
@@ -412,7 +412,7 @@
                 },
                 {
                     "step": 30,
-                    "forward_time": 0.00805136100098025,
+                    "forward_time": 0.00803416500275489,
                     "action": "R",
                     "policy_logits": [
                         -1.6788694858551025,
@@ -424,7 +424,7 @@
                 },
                 {
                     "step": 31,
-                    "forward_time": 0.008373802000278374,
+                    "forward_time": 0.008176309998816578,
                     "action": "D",
                     "policy_logits": [
                         -1.3996186256408691,
@@ -436,7 +436,7 @@
                 },
                 {
                     "step": 32,
-                    "forward_time": 0.008412138000494451,
+                    "forward_time": 0.008095294000668218,
                     "action": "R",
                     "policy_logits": [
                         -1.3002650737762451,
@@ -448,7 +448,7 @@
                 },
                 {
                     "step": 33,
-                    "forward_time": 0.02330626100047084,
+                    "forward_time": 0.007689459998800885,
                     "action": "R",
                     "policy_logits": [
                         -1.3325109481811523,
@@ -460,7 +460,7 @@
                 },
                 {
                     "step": 34,
-                    "forward_time": 0.011184709999724873,
+                    "forward_time": 0.007820136997906957,
                     "action": "U",
                     "policy_logits": [
                         3.891275405883789,
@@ -472,7 +472,7 @@
                 },
                 {
                     "step": 35,
-                    "forward_time": 0.02369807900140586,
+                    "forward_time": 0.007847926997783361,
                     "action": "R",
                     "policy_logits": [
                         -1.1223948001861572,
@@ -484,7 +484,7 @@
                 },
                 {
                     "step": 36,
-                    "forward_time": 0.008400005999646964,
+                    "forward_time": 0.007770544998493278,
                     "action": "D",
                     "policy_logits": [
                         -1.2148470878601074,
@@ -496,7 +496,7 @@
                 },
                 {
                     "step": 37,
-                    "forward_time": 0.008500474001266412,
+                    "forward_time": 0.0077802530031476635,
                     "action": "D",
                     "policy_logits": [
                         -1.5581812858581543,
@@ -508,7 +508,7 @@
                 },
                 {
                     "step": 38,
-                    "forward_time": 0.008213983999667107,
+                    "forward_time": 0.007806984998751432,
                     "action": "D",
                     "policy_logits": [
                         -1.5869755744934082,
@@ -523,12 +523,12 @@
         "testsokoban.txt_map_002": {
             "status": "success",
             "steps": 24,
-            "inference_time_ms": 270.19764100259636,
-            "total_system_time_ms": 363.72300800030644,
+            "inference_time_ms": 302.90955799864605,
+            "total_system_time_ms": 373.10500999956275,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 0.013900607000323362,
+                    "forward_time": 0.033574998000403866,
                     "action": "D",
                     "policy_logits": [
                         -0.7669795155525208,
@@ -540,7 +540,7 @@
                 },
                 {
                     "step": 2,
-                    "forward_time": 0.008127259001412313,
+                    "forward_time": 0.029959400999359787,
                     "action": "R",
                     "policy_logits": [
                         -1.1774051189422607,
@@ -552,7 +552,7 @@
                 },
                 {
                     "step": 3,
-                    "forward_time": 0.00830222600052366,
+                    "forward_time": 0.008423736999247922,
                     "action": "R",
                     "policy_logits": [
                         -0.7621068358421326,
@@ -564,7 +564,7 @@
                 },
                 {
                     "step": 4,
-                    "forward_time": 0.008706885000719922,
+                    "forward_time": 0.008077219001279445,
                     "action": "R",
                     "policy_logits": [
                         -0.9232452511787415,
@@ -576,7 +576,7 @@
                 },
                 {
                     "step": 5,
-                    "forward_time": 0.008832763000100385,
+                    "forward_time": 0.025044941001397092,
                     "action": "D",
                     "policy_logits": [
                         -0.9282484650611877,
@@ -588,7 +588,7 @@
                 },
                 {
                     "step": 6,
-                    "forward_time": 0.008196200000384124,
+                    "forward_time": 0.008035311999265105,
                     "action": "L",
                     "policy_logits": [
                         -1.1596007347106934,
@@ -600,7 +600,7 @@
                 },
                 {
                     "step": 7,
-                    "forward_time": 0.02392323699859844,
+                    "forward_time": 0.008274716001324123,
                     "action": "D",
                     "policy_logits": [
                         -1.3126921653747559,
@@ -612,7 +612,7 @@
                 },
                 {
                     "step": 8,
-                    "forward_time": 0.014712719999806723,
+                    "forward_time": 0.009037871997861657,
                     "action": "L",
                     "policy_logits": [
                         -1.4319255352020264,
@@ -624,7 +624,7 @@
                 },
                 {
                     "step": 9,
-                    "forward_time": 0.008200508000300033,
+                    "forward_time": 0.007879684999352321,
                     "action": "L",
                     "policy_logits": [
                         -2.20593523979187,
@@ -636,7 +636,7 @@
                 },
                 {
                     "step": 10,
-                    "forward_time": 0.007989047999217291,
+                    "forward_time": 0.008319190001202514,
                     "action": "R",
                     "policy_logits": [
                         -2.2048938274383545,
@@ -648,7 +648,7 @@
                 },
                 {
                     "step": 11,
-                    "forward_time": 0.009379315999467508,
+                    "forward_time": 0.008012063000933267,
                     "action": "R",
                     "policy_logits": [
                         -2.1365036964416504,
@@ -660,7 +660,7 @@
                 },
                 {
                     "step": 12,
-                    "forward_time": 0.02273093400071957,
+                    "forward_time": 0.008160975001374027,
                     "action": "D",
                     "policy_logits": [
                         -1.4007837772369385,
@@ -672,7 +672,7 @@
                 },
                 {
                     "step": 13,
-                    "forward_time": 0.008402980000028037,
+                    "forward_time": 0.007767091999994591,
                     "action": "R",
                     "policy_logits": [
                         -1.4907081127166748,
@@ -684,7 +684,7 @@
                 },
                 {
                     "step": 14,
-                    "forward_time": 0.00828699100020458,
+                    "forward_time": 0.008022181998967426,
                     "action": "R",
                     "policy_logits": [
                         -2.1602864265441895,
@@ -696,7 +696,7 @@
                 },
                 {
                     "step": 15,
-                    "forward_time": 0.030524855999829015,
+                    "forward_time": 0.00804267199782771,
                     "action": "U",
                     "policy_logits": [
                         3.8363037109375,
@@ -708,7 +708,7 @@
                 },
                 {
                     "step": 16,
-                    "forward_time": 0.008253664000221761,
+                    "forward_time": 0.03121365699917078,
                     "action": "L",
                     "policy_logits": [
                         -1.3859202861785889,
@@ -720,7 +720,7 @@
                 },
                 {
                     "step": 17,
-                    "forward_time": 0.008908425999834435,
+                    "forward_time": 0.01006052899901988,
                     "action": "U",
                     "policy_logits": [
                         4.255613327026367,
@@ -732,7 +732,7 @@
                 },
                 {
                     "step": 18,
-                    "forward_time": 0.008905629998480435,
+                    "forward_time": 0.008020601999305654,
                     "action": "L",
                     "policy_logits": [
                         2.140505790710449,
@@ -744,7 +744,7 @@
                 },
                 {
                     "step": 19,
-                    "forward_time": 0.008503625000230386,
+                    "forward_time": 0.008239282000431558,
                     "action": "U",
                     "policy_logits": [
                         4.465545654296875,
@@ -756,7 +756,7 @@
                 },
                 {
                     "step": 20,
-                    "forward_time": 0.008262843000920839,
+                    "forward_time": 0.026383258002169896,
                     "action": "L",
                     "policy_logits": [
                         -1.1312307119369507,
@@ -768,7 +768,7 @@
                 },
                 {
                     "step": 21,
-                    "forward_time": 0.011682133001158945,
+                    "forward_time": 0.00776013499853434,
                     "action": "L",
                     "policy_logits": [
                         -0.879693329334259,
@@ -780,7 +780,7 @@
                 },
                 {
                     "step": 22,
-                    "forward_time": 0.009122161000050255,
+                    "forward_time": 0.008792197000730084,
                     "action": "L",
                     "policy_logits": [
                         -1.0621192455291748,
@@ -792,7 +792,7 @@
                 },
                 {
                     "step": 23,
-                    "forward_time": 0.008381551999264047,
+                    "forward_time": 0.007848531000490766,
                     "action": "D",
                     "policy_logits": [
                         -1.094304084777832,
@@ -804,7 +804,7 @@
                 },
                 {
                     "step": 24,
-                    "forward_time": 0.007961077000800287,
+                    "forward_time": 0.007959311999002239,
                     "action": "D",
                     "policy_logits": [
                         -1.3177838325500488,
@@ -819,12 +819,12 @@
         "testsokoban.txt_map_003": {
             "status": "success",
             "steps": 24,
-            "inference_time_ms": 377.5751150005817,
-            "total_system_time_ms": 533.1646739996359,
+            "inference_time_ms": 353.0191380014003,
+            "total_system_time_ms": 422.3199529988051,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 0.03736473900062265,
+                    "forward_time": 0.034377333999145776,
                     "action": "L",
                     "policy_logits": [
                         0.6030640602111816,
@@ -836,7 +836,7 @@
                 },
                 {
                     "step": 2,
-                    "forward_time": 0.010865140000532847,
+                    "forward_time": 0.00821390900091501,
                     "action": "U",
                     "policy_logits": [
                         3.9060001373291016,
@@ -848,7 +848,7 @@
                 },
                 {
                     "step": 3,
-                    "forward_time": 0.01822406800056342,
+                    "forward_time": 0.007900770000560442,
                     "action": "U",
                     "policy_logits": [
                         3.804981231689453,
@@ -860,7 +860,7 @@
                 },
                 {
                     "step": 4,
-                    "forward_time": 0.024202646000048844,
+                    "forward_time": 0.00853776999792899,
                     "action": "D",
                     "policy_logits": [
                         -2.1060726642608643,
@@ -872,7 +872,7 @@
                 },
                 {
                     "step": 5,
-                    "forward_time": 0.01352491000034206,
+                    "forward_time": 0.007600720000482397,
                     "action": "D",
                     "policy_logits": [
                         -1.438086986541748,
@@ -884,7 +884,7 @@
                 },
                 {
                     "step": 6,
-                    "forward_time": 0.00806132300022,
+                    "forward_time": 0.007629538999026408,
                     "action": "D",
                     "policy_logits": [
                         -1.4920296669006348,
@@ -896,7 +896,7 @@
                 },
                 {
                     "step": 7,
-                    "forward_time": 0.007973686000696034,
+                    "forward_time": 0.03032271299889544,
                     "action": "D",
                     "policy_logits": [
                         -1.4973726272583008,
@@ -908,7 +908,7 @@
                 },
                 {
                     "step": 8,
-                    "forward_time": 0.008308492999276496,
+                    "forward_time": 0.008176923998689745,
                     "action": "D",
                     "policy_logits": [
                         -1.4416239261627197,
@@ -920,7 +920,7 @@
                 },
                 {
                     "step": 9,
-                    "forward_time": 0.008897138999600429,
+                    "forward_time": 0.00795787700189976,
                     "action": "R",
                     "policy_logits": [
                         -1.4524595737457275,
@@ -932,7 +932,7 @@
                 },
                 {
                     "step": 10,
-                    "forward_time": 0.00847027100098785,
+                    "forward_time": 0.030212075002054917,
                     "action": "R",
                     "policy_logits": [
                         -0.5239779949188232,
@@ -944,7 +944,7 @@
                 },
                 {
                     "step": 11,
-                    "forward_time": 0.007892813999205828,
+                    "forward_time": 0.029905471001256956,
                     "action": "U",
                     "policy_logits": [
                         3.8828701972961426,
@@ -956,7 +956,7 @@
                 },
                 {
                     "step": 12,
-                    "forward_time": 0.00868583800001943,
+                    "forward_time": 0.007730470999376848,
                     "action": "D",
                     "policy_logits": [
                         -1.4819471836090088,
@@ -968,7 +968,7 @@
                 },
                 {
                     "step": 13,
-                    "forward_time": 0.00800883400006569,
+                    "forward_time": 0.008071727999777067,
                     "action": "L",
                     "policy_logits": [
                         -1.2951300144195557,
@@ -980,7 +980,7 @@
                 },
                 {
                     "step": 14,
-                    "forward_time": 0.024731582998356316,
+                    "forward_time": 0.007807893001881894,
                     "action": "U",
                     "policy_logits": [
                         3.8121213912963867,
@@ -992,7 +992,7 @@
                 },
                 {
                     "step": 15,
-                    "forward_time": 0.023710168999969028,
+                    "forward_time": 0.020641676001105225,
                     "action": "U",
                     "policy_logits": [
                         3.945498466491699,
@@ -1004,7 +1004,7 @@
                 },
                 {
                     "step": 16,
-                    "forward_time": 0.022685494999677758,
+                    "forward_time": 0.018462954998540226,
                     "action": "R",
                     "policy_logits": [
                         -1.6079859733581543,
@@ -1016,7 +1016,7 @@
                 },
                 {
                     "step": 17,
-                    "forward_time": 0.009331864999694517,
+                    "forward_time": 0.008285367999633309,
                     "action": "R",
                     "policy_logits": [
                         0.1924712061882019,
@@ -1028,7 +1028,7 @@
                 },
                 {
                     "step": 18,
-                    "forward_time": 0.04830438899989531,
+                    "forward_time": 0.0077856799980509095,
                     "action": "U",
                     "policy_logits": [
                         4.04076623916626,
@@ -1040,7 +1040,7 @@
                 },
                 {
                     "step": 19,
-                    "forward_time": 0.013368852998610237,
+                    "forward_time": 0.02200418000211357,
                     "action": "R",
                     "policy_logits": [
                         -2.2892086505889893,
@@ -1052,7 +1052,7 @@
                 },
                 {
                     "step": 20,
-                    "forward_time": 0.019408068001212087,
+                    "forward_time": 0.008785287998762215,
                     "action": "U",
                     "policy_logits": [
                         3.874694347381592,
@@ -1064,7 +1064,7 @@
                 },
                 {
                     "step": 21,
-                    "forward_time": 0.011689348000800237,
+                    "forward_time": 0.02490996000051382,
                     "action": "L",
                     "policy_logits": [
                         -1.42728590965271,
@@ -1076,7 +1076,7 @@
                 },
                 {
                     "step": 22,
-                    "forward_time": 0.011433874000431388,
+                    "forward_time": 0.021882634002395207,
                     "action": "D",
                     "policy_logits": [
                         -1.3298189640045166,
@@ -1088,7 +1088,7 @@
                 },
                 {
                     "step": 23,
-                    "forward_time": 0.013891861000956851,
+                    "forward_time": 0.00804829199842061,
                     "action": "L",
                     "policy_logits": [
                         -1.3004131317138672,
@@ -1100,7 +1100,7 @@
                 },
                 {
                     "step": 24,
-                    "forward_time": 0.008539708998796414,
+                    "forward_time": 0.007767910999973537,
                     "action": "L",
                     "policy_logits": [
                         -1.8802857398986816,

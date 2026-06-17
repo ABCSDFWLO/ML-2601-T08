@@ -2,6 +2,7 @@
 import os
 import time
 import subprocess
+from datetime import datetime
 
 # [설정 변수]
 CONTAINER_NAME = "drc_solver_env"
@@ -11,6 +12,11 @@ INTERNAL_TASK_FILE = f"{INTERNAL_WORKSPACE}/task.txt"
 INTERNAL_OUTPUT_JSON = f"{INTERNAL_WORKSPACE}/DRC33_results.json"
 
 LOCAL_OUTPUT_DIR = os.getcwd()
+
+def log_print(message):
+    """현재 시간을 포함하여 터미널에 출력하는 함수"""
+    current_time = datetime.now().strftime("%H:%M:%S")
+    print(f"[{current_time}] {message}")
 
 def run_cmd(cmd):
     return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='ignore')
@@ -76,14 +82,14 @@ def main():
             run_cmd(["docker", "cp", "temp_task.txt", f"{CONTAINER_NAME}:{INTERNAL_TASK_FILE}"])
             os.remove("temp_task.txt")
 
-            print("[Master] Waiting for Docker to finish...")
+            log_print("[Master] Waiting for Docker to finish...")
             while not check_docker_task_done():
                 time.sleep(1)
 
-            print("[Master] Retrieving results from Docker...")
+            log_print("[Master] Retrieving results from Docker...")
             local_json_path = os.path.join(LOCAL_OUTPUT_DIR, f"DRC33_{base_name}_results.json")
             run_cmd(["docker", "cp", f"{CONTAINER_NAME}:{INTERNAL_OUTPUT_JSON}", local_json_path])
-            print(f"[Master] Done! Saved locally to: {local_json_path}")
+            log_print(f"[Master] Done! Saved locally to: {local_json_path}")
 
         except KeyboardInterrupt:
             with open("temp_exit.txt", "w") as f: f.write("exit")
