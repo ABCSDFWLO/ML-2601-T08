@@ -10,6 +10,8 @@ cd learned-planner
 4. python drc_solver.py
  - 테스트: .\testsokoban.txt
 
+**결과 분석:** .\analyze.py <json 파일 경로>
+
 ----
 
 
