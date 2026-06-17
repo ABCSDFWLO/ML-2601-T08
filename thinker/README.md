@@ -55,7 +55,6 @@ Raw MDP Sokoban default run:
 python train.py --env cSokoban-v0 --model_size_nn 1 --disable_frame_copy --discounting 0.97 --reward_clip -1 --disable_model --unroll_length 20 --learning_rate 0.0003
 ```
 
-If you encounter errors related to Ray memory, try setting `--ray_mem -1` to allow Ray to allocate memory automatically.
 
 The number of GPUs will be detected automatically. A single RTX3090 is sufficient for the Sokoban default run, while two RTX3090s are required for the Atari default run. The number of CPUs and GPUs allocated can be controlled with the `--ray_cpu` and `--ray_gpu` options, e.g., `--ray_cpu 16 --ray_gpu 1` limits usage to 16 CPUs and 1 GPU.
 
