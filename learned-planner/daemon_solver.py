@@ -127,11 +127,8 @@ def main():
 
         target_files = [target_path] if os.path.isfile(target_path) else glob.glob(os.path.join(target_path, "**", "*.txt"), recursive=True)
         
+        # 기존 파일을 불러와서 누적하는 로직을 완전히 삭제하고 매 작업마다 딕셔너리 초기화
         results_data = {"data": {}}
-        if os.path.exists(output_json):
-            try:
-                with open(output_json, 'r') as f: results_data = json.load(f)
-            except: pass
 
         for file_path in target_files:
             file_name = os.path.basename(file_path)
@@ -151,20 +148,27 @@ def main():
                 lstm_states = [(torch.zeros((1, 32, 10, 10), dtype=torch.float32).to(device), torch.zeros((1, 32, 10, 10), dtype=torch.float32).to(device)) for _ in range(num_layers)]
                 episode_starts = torch.ones((1,), dtype=torch.bool).to(device)
 
-                step_count, total_time = 0, 0.0
-                done, solved = False, False
+                # 1. 상태 및 시간 측정 변수 초기화
+                step_count = 0
+                total_forward_time = 0.0 
+                done = False
+                solved = False
                 step_outputs = []
+                wall_clock_start = time.perf_counter() 
 
+                # 2. 추론 루프 진입
                 with torch.no_grad():
                     while not done and step_count < 120:
                         obs_tensor = torch.tensor(obs, dtype=torch.float32).to(device) / 255.0
+                        
                         t0 = time.perf_counter()
                         features, lstm_states = policy.features_extractor(obs_tensor, lstm_states, episode_starts)
                         latent_pi, latent_vf = policy.mlp_extractor(features)
                         policy_logits = policy.action_net(latent_pi)
                         value = policy.value_net(latent_vf)
                         forward_time = time.perf_counter() - t0
-                        total_time += forward_time
+                        
+                        total_forward_time += forward_time # 순수 연산 시간 누적
                         
                         action = torch.argmax(policy_logits, dim=-1).cpu().numpy()
                         action_map = {0: "U", 1: "D", 2: "L", 3: "R"}
@@ -179,8 +183,17 @@ def main():
                         step_count += 1
                 env.close()
 
-                results_data["data"][map_key] = {"status": "success" if solved else "failed", "solve_time_ms": total_time * 1000, "steps": step_count, "solution": step_outputs}
+                # [수정] 전체 소요 시간 계산
+                total_wall_clock_time = time.perf_counter() - wall_clock_start
 
+                # [수정] JSON 결과값 기록 구조: 두 가지 시간을 명시적으로 분리
+                results_data["data"][map_key] = {
+                    "status": "success" if solved else "failed", 
+                    "steps": step_count, 
+                    "inference_time_ms": total_forward_time * 1000,       # 순수 모델 추론 시간
+                    "total_system_time_ms": total_wall_clock_time * 1000, # 환경 상호작용 포함 전체 시간
+                    "solution": step_outputs
+                }
         # 결과 저장 및 작업 파일 삭제 (완료 신호)
         temp_json = output_json + ".tmp"
         with open(temp_json, 'w') as f: json.dump(results_data, f, indent=4)

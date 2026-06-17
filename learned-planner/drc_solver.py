@@ -32,8 +32,8 @@ def start_docker_environment():
     print("[Master] Starting DRC33 Daemon in background...")
     run_cmd(["docker", "exec", "-d", CONTAINER_NAME, "python", f"{INTERNAL_WORKSPACE}/daemon_solver.py"])
     
-    print("[Master] Waiting for DRC33 model to load into VRAM (15s)...")
-    time.sleep(15)
+    print("[Master] Waiting for DRC33 model to load into VRAM (10s)...")
+    time.sleep(10)
 
 def check_docker_task_done():
     res = run_cmd(["docker", "exec", CONTAINER_NAME, "ls", INTERNAL_TASK_FILE])
