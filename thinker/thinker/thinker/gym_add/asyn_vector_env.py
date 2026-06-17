@@ -237,13 +237,9 @@ class AsyncVectorEnv(VectorEnv):
         self._state = AsyncState.DEFAULT
 
         if not self.shared_memory:
-            if self.inds is None:
-                self.observations = concatenate(
-                    results, self.observations, self.single_observation_space
-                )
-            else:
-                for idx, res in zip(self.inds, results):
-                    self.observations[idx] = res
+            self.observations = concatenate(
+                results, self.observations, self.single_observation_space
+            )
         if self.inds is None:
             ret_observations = (
                 deepcopy(self.observations) if self.copy else self.observations
@@ -401,8 +397,8 @@ class AsyncVectorEnv(VectorEnv):
                     deepcopy(self.observations) if self.copy else self.observations
                 )
             else:
-                for idx, res in zip(self.inds, observations_list):
-                    self.observations[idx] = res
+                for i in self.inds:
+                    self.observations[i] = observations_list[i]
                 ret_observations = np.array([self.observations[i] for i in self.inds])
                 if self.copy:
                     ret_observations = deepcopy(ret_observations)

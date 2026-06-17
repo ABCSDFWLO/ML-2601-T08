@@ -469,7 +469,7 @@ cdef class cVecFullModelWrapper():
             with torch.no_grad():
                 obs_py = torch.tensor(obs, dtype=torch.uint8, device=self.device)
                 model_net_out_1 = model_net(obs_py, 
-                        torch.tensor(pass_action, dtype=torch.long, device=self.device).unsqueeze(0), 
+                        torch.tensor(pass_action, dtype=long, device=self.device).unsqueeze(0), 
                         one_hot=False,
                         ret_zs=False)                      
                     
@@ -485,7 +485,7 @@ cdef class cVecFullModelWrapper():
                     # all batch index are in the first index 
                 model_net_out_4 = model_net.forward_single(
                     state = pass_model_states,
-                    action = torch.tensor(pass_model_action, dtype=torch.long, device=self.device),                     
+                    action = torch.tensor(pass_model_action, dtype=long, device=self.device),                     
                     one_hot = False,)  
             rs_4 = model_net_out_4.rs[-1].float().cpu().numpy()
             vs_4 = model_net_out_4.vs[-1].float().cpu().numpy()
@@ -973,7 +973,7 @@ cdef class cVecModelWrapper():
             with torch.no_grad():
                 obs_py = torch.tensor(obs, dtype=torch.uint8, device=self.device)
                 model_net_out = model_net(obs_py, 
-                        torch.tensor(pass_action, dtype=torch.long, device=self.device).unsqueeze(0), 
+                        torch.tensor(pass_action, dtype=long, device=self.device).unsqueeze(0), 
                         one_hot=False)  
                 model_ys = model_net_out.ys
             vs = model_net_out.vs[-1].float().cpu().numpy()
