@@ -1,0 +1,71 @@
+name: 'HalfWeg multi-split Boxoban benchmark (finetuned)'
+cmd: 'benchmark'
+
+benchmark:
+  output_csv: 'results/benchmark_results_finetuned.csv'
+  splits:
+    - name: unfiltered_test
+      levels_glob: 'unfiltered/test/*.txt'
+      n_games: 50
+      max_files: 1
+    - name: unfiltered_valid_5files
+      levels_glob: 'unfiltered/valid/*.txt'
+      n_games: 20
+      max_files: 5
+      file_sample_seed: 42
+    - name: unfiltered_train_10files
+      levels_glob: 'unfiltered/train/*.txt'
+      n_games: 10
+      max_files: 10
+      file_sample_seed: 42
+    - name: medium_valid_5files
+      levels_glob: 'medium/valid/*.txt'
+      n_games: 20
+      max_files: 5
+      file_sample_seed: 42
+    - name: medium_train_5files
+      levels_glob: 'medium/train/*.txt'
+      n_games: 10
+      max_files: 5
+      file_sample_seed: 42
+    - name: hard_all
+      levels_glob: 'hard/*.txt'
+      n_games: 10
+      max_files: 4
+
+env:
+  name: boxoban
+  n_max_episode_steps: 100
+
+infra:
+  sub_processes_cnt: 1
+  threads_cnt: 10
+  device: gpu
+  log: mem
+
+evaluate:
+  n_games_to_solve: 10
+  mem_max_episodes: 100000
+  towards_or_away: 'towards'
+  policies: 'last'
+  targets: all
+  method: closed_loop_replan
+  replan_every_actions: 0
+  replan_mismatch_threshold: 0.20
+  replan_stall_steps: 10
+  min_commit_steps: 4
+  progress_every_games: 0
+  progress_every_targets: 0
+
+model:
+  PLTA:
+    class: Sokoban_PLTA_v4_1010
+    learning_rate: 0.003
+    weight_decay: 0
+    batch_size: 128
+  PLHW:
+    class: Sokoban_PLHW_v4_1010
+    learning_rate: 0.003
+    weight_decay: 0
+    batch_size: 128
+  checkpoint: 'checkpoints/checkpoint_20260617-114723.ckpt'
