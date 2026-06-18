@@ -1,31 +1,38 @@
-name: 'HalfWeg fine-tune on medium + unfiltered'
+name: 'HalfWeg robust finetune (guided trajectories)'
 cmd: 'train'
 
 infra:
   device: gpu
 
-# ---------------------------------------------------------------------------
-# Training settings
-# ---------------------------------------------------------------------------
 train:
-  # Resume from existing checkpoint
-  # Can be a single .txt file or a directory of .txt files (rotated per epoch)
+  # Directory is rotated file-by-file each epoch.
   levels: /workspace/boxoban-levels/unfiltered/train
-  probe_levels: /workspace/boxoban-levels/medium/valid/000.txt
+  probe_levels: /workspace/boxoban-levels/unfiltered/valid/000.txt
 
-  epochs: 200
+  epochs: 30
+  n_max_episode_steps: 60
 
-  # Per-epoch data collection
-  n_levels_per_epoch: 64       # random levels sampled per epoch
-  n_walks_per_level: 3         # random walks per level
-  walk_steps: 160              # steps per walk (must cover largest PLHW span = 128)
+  # Guided data collection
+  n_levels_per_epoch: 4
+  n_attempts_per_level: 1
+  min_commit_steps: 2
+  min_partial_ratio: 0.10
+  min_partial_actions: 4
+  max_partial_ratio: 0.30
+  plhw_min_partial_ratio: 0.1
+  collector_policy: PL0
 
+  # Optimization
   batch_size: 128
+  l2sp_plta: 0.0001
+  l2sp_plhw: 0.0001
 
-  # Probe & checkpoint
-  probe_every_epochs: 10
+  # Probe / selection / stopping
+  probe_every_epochs: 2
   probe_games: 20
   probe_max_steps: 100
+  early_stop_patience: 4
+  min_probe_improve: 0.001
 
   save_every_epochs: 20
   checkpoints_dir: /workspace/halfweg/checkpoints
@@ -37,12 +44,12 @@ env:
 model:
   PLTA:
     class: Sokoban_PLTA_v4_1010
-    learning_rate: 0.0003       # lower LR for fine-tuning
+    learning_rate: 0.0001
     weight_decay: 0.0001
     batch_size: 128
   PLHW:
     class: Sokoban_PLHW_v4_1010
-    learning_rate: 0.0003
+    learning_rate: 0.0001
     weight_decay: 0.0001
     batch_size: 128
   checkpoint: 'trained_models/boxoban_vast_v4_20250421-073320__repacked.ckpt'

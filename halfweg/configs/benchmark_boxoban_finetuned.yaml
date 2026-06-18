@@ -2,7 +2,7 @@ name: 'HalfWeg multi-split Boxoban benchmark (finetuned)'
 cmd: 'benchmark'
 
 benchmark:
-  output_csv: 'results/benchmark_results_finetuned.csv'
+  output_csv: 'results/benchmark_results_finetuned_v2.csv'
   splits:
     - name: unfiltered_test
       levels_glob: 'unfiltered/test/*.txt'
@@ -68,4 +68,4 @@ model:
     learning_rate: 0.003
     weight_decay: 0
     batch_size: 128
-  checkpoint: 'checkpoints/checkpoint_20260617-114723.ckpt'
+  checkpoint: 'checkpoints/checkpoint_20260618-070104.ckpt'

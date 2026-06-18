@@ -1,29 +1,19 @@
 """
-HalfWeg self-play fine-tuner.
+HalfWeg robust fine-tuner.
 
-Continues training PLTA + PLHW from an existing checkpoint using random-walk
-trajectories collected on Boxoban levels.
-
-Training signals:
-  PLTA  - CrossEntropy(predicted_actions, actual_actions)
-          Label: exact action sequence from random-walk sub-trajectory of length PREDICT_STEPS
-          Input: (s_i, s_{i+k}, b=0)
-
-  PLHW  - MSE(predicted_midpoint_enc, actual_midpoint_enc)
-          Label: encoded midpoint state at step span/2
-          Input: (enc(s_start), enc(s_end), b=0, layer_idx=L)
-          At layer L the span = PREDICT_STEPS * 2^(L+1), mid = span/2
-
-Usage (inside container):
-    python -u src/train_halfweg.py configs/train_finetune_medium.yaml
+- Policy-guided trajectory collection (not random-walk imitation)
+- Fallback exploration when policy emits STOP immediately
+- Prefer policy-generated action windows for PLTA labels
+- Allow PLHW learning from high-progress partial trajectories
+- Probe-based early stopping and best-checkpoint selection
 """
 
+import glob
 import os
-import sys
 import pprint
 import random
+import sys
 import time
-from collections import defaultdict
 
 import numpy as np
 import torch
@@ -34,79 +24,140 @@ if _SRC_DIR not in sys.path:
     sys.path.insert(0, _SRC_DIR)
 
 import environments
-import helpers
-from hw_impl import hw_experience_replay, model_mgmt
+from environments.sokoban.sokoban_env import CHANNEL_BOX, CHANNEL_GOAL
+from hw_impl import env_torch_wrapper, evaluate, hw_common, hw_experience_replay, model_mgmt
 
 
-# ---------------------------------------------------------------------------
-# Random-walk trajectory collection
-# ---------------------------------------------------------------------------
+def _pick_target_tensor(env, device):
+    targets_np = env.get_target_states()
+    ti = np.random.randint(len(targets_np))
+    return torch.as_tensor(targets_np[ti:ti + 1], dtype=torch.float32, device=device)
 
-def _collect_random_walk(env, max_steps: int) -> tuple[list, list]:
+
+def _boxes_on_goal_ratio(env) -> float:
+    board = env.get_model_input_s()
+    total_boxes = int(np.sum(board[CHANNEL_BOX]))
+    if total_boxes == 0:
+        return 0.0
+    boxes_on_goals = int(np.sum(board[CHANNEL_BOX] * board[CHANNEL_GOAL]))
+    return float(boxes_on_goals / total_boxes)
+
+
+def collect_guided_trajectories(
+    envs_manager,
+    policy,
+    device,
+    AS: int,
+    n_levels: int,
+    n_attempts_per_level: int,
+    n_max_episode_steps: int,
+    min_commit_steps: int,
+    min_partial_ratio: float,
+    min_partial_actions: int,
+):
     """
-    Return (states, actions) along a random walk.
-    states[i+1] is the result of actions[i] from states[i].
-    Stops early if the environment terminates.
+    Returns three lists of items:
+      (states, actions, action_is_policy, solved, partial_ratio)
     """
-    states = [env.copy()]
-    actions = []
-    for _ in range(max_steps):
-        if env.done:
-            break
-        mask = env.get_valid_actions_mask()
-        valid = np.where(np.array(mask) == 1)[0]
-        if len(valid) == 0:
-            break
-        action = int(np.random.choice(valid))
-        env.step(action)
-        states.append(env.copy())
-        actions.append(action)
-    return states, actions
+    solved_traj = []
+    partial_traj = []
+    all_traj = []
+
+    for li in range(n_levels):
+        if (li + 1) % max(1, n_levels // 4) == 0:
+            print(f"    [collect] level {li + 1}/{n_levels}", flush=True)
+
+        env0 = envs_manager.create_env()
+
+        for _ in range(n_attempts_per_level):
+            env = env0.copy()
+            target_t = _pick_target_tensor(env, device)
+
+            states = [env.copy()]
+            actions = []
+            action_is_policy = []
+
+            while len(actions) < n_max_episode_steps and not env.done:
+                s0 = env_torch_wrapper.EnvsTensorList(envs=[env])
+                target_env = env_torch_wrapper.EnvsTensorList(states_t=target_t)
+                b = hw_common.get_b_array_from_towards_or_away(True, cnt=1, device=device)
+                plan = policy.get_plan_envs_to_envs(s0=s0, target=target_env, b=b)[0].detach().cpu().numpy()
+
+                acted = 0
+                for a in plan:
+                    a = int(a)
+                    if a == AS:
+                        break
+
+                    reward, done = env.step(a)
+                    actions.append(a)
+                    action_is_policy.append(1)
+                    states.append(env.copy())
+                    acted += 1
+
+                    if reward == 1 or done or len(actions) >= n_max_episode_steps:
+                        break
+                    if acted >= min_commit_steps:
+                        break
+
+                if acted == 0:
+                    # Policy emitted STOP immediately: bootstrap one random valid action.
+                    valid = np.where(np.array(env.get_valid_actions_mask()) == 1)[0]
+                    if len(valid) == 0:
+                        break
+                    a = int(np.random.choice(valid))
+                    env.step(a)
+                    actions.append(a)
+                    action_is_policy.append(0)
+                    states.append(env.copy())
+
+            if len(actions) == 0:
+                continue
+
+            solved = bool(env.done and _boxes_on_goal_ratio(env) >= 1.0)
+            partial_ratio = _boxes_on_goal_ratio(env)
+            item = (states, actions, action_is_policy, solved, partial_ratio)
+            all_traj.append(item)
+
+            if solved:
+                solved_traj.append(item)
+            elif partial_ratio >= min_partial_ratio and len(actions) >= min_partial_actions:
+                partial_traj.append(item)
+
+    return solved_traj, partial_traj, all_traj
 
 
-def collect_trajectories(
-        envs_manager,
-        n_levels: int,
-        walk_steps: int,
-        n_walks_per_level: int) -> list[tuple[list, list]]:
-    """
-    Returns flat list of (states, actions) tuples.
-    """
-    trajectories = []
-    for _ in range(n_levels):
-        env = envs_manager.create_env()
-        for _ in range(n_walks_per_level):
-            states, actions = _collect_random_walk(env.copy(), walk_steps)
-            if len(states) >= 2:
-                trajectories.append((states, actions))
-    return trajectories
-
-
-# ---------------------------------------------------------------------------
-# Training sample extraction
-# ---------------------------------------------------------------------------
-
-def _extract_plta_samples(trajectories: list[tuple], plta, predict_steps: int, AS: int, device):
-    """
-    From each (states, actions) trajectory, extract (s_i, s_{i+k}, actions[i:i+k])
-    for k = min(predict_steps, available steps from i).
-    Actions are already recorded during collection — O(N) extraction.
-    """
+def _extract_plta_samples(trajectories, predict_steps: int, AS: int, device):
     ss_list, ts_list, labels_list = [], [], []
+    fallback_windows = []
 
-    for states, acts in trajectories:
+    for states, acts, is_policy, _solved, _ratio in trajectories:
         n = len(states)
         if n < 2:
             continue
+
         for i in range(n - 1):
             k = min(predict_steps, n - 1 - i)
             if k < 1:
                 continue
+
             label = np.full(predict_steps, AS, dtype=np.int64)
             label[:k] = acts[i:i + k]
-            ss_list.append(states[i].get_model_input_s())
-            ts_list.append(states[i + k].get_model_input_s())
-            labels_list.append(label)
+            item = (states[i].get_model_input_s(), states[i + k].get_model_input_s(), label)
+
+            pure_policy = bool(np.all(np.array(is_policy[i:i + k]) == 1))
+            if pure_policy:
+                ss_list.append(item[0])
+                ts_list.append(item[1])
+                labels_list.append(item[2])
+            else:
+                fallback_windows.append(item)
+
+    if len(ss_list) == 0 and len(fallback_windows) > 0:
+        for s, t, y in fallback_windows:
+            ss_list.append(s)
+            ts_list.append(t)
+            labels_list.append(y)
 
     if not ss_list:
         return None, None, None
@@ -117,40 +168,41 @@ def _extract_plta_samples(trajectories: list[tuple], plta, predict_steps: int, A
     return ss_t, ts_t, labels_t
 
 
-def _extract_plhw_samples(trajectories: list[tuple], plta, plhw_layers: int, predict_steps: int, device):
-    """
-    For each (states, actions) trajectory, extract PLHW training samples.
-    At layer L: span = predict_steps * 2^(L+1), mid = span // 2
-    Returns (ss_enc, ts_enc, mid_enc, layer_idx_t).
-    """
-    result_ss, result_ts, result_mid, result_layer = [], [], [], []
+def _extract_plhw_samples(
+    trajectories,
+    plta,
+    plhw_layers: int,
+    predict_steps: int,
+    device,
+    min_partial_ratio_for_plhw: float,
+):
+    ss_raw, ts_raw, mid_raw, layer_idx = [], [], [], []
 
-    for states, _acts in trajectories:
+    for states, _acts, _is_policy, solved, ratio in trajectories:
+        if not solved and ratio < min_partial_ratio_for_plhw:
+            continue
+
         n = len(states)
-        for L in range(plhw_layers):
-            span = predict_steps * (2 ** (L + 1))
+        for li in range(plhw_layers):
+            span = predict_steps * (2 ** (li + 1))
             mid = span // 2
             if n <= span:
                 continue
-            # Sample a few triplets from this trajectory
-            max_start = n - span - 1
-            for start_i in range(0, max_start + 1, max(1, max_start // 4)):
-                s_start = states[start_i].get_model_input_s()
-                s_mid = states[start_i + mid].get_model_input_s()
-                s_end = states[start_i + span].get_model_input_s()
-                result_ss.append(s_start)
-                result_ts.append(s_end)
-                result_mid.append(s_mid)
-                result_layer.append(L)
 
-    if not result_ss:
+            max_start = n - span - 1
+            for start_i in range(0, max_start + 1, max(1, max_start // 6)):
+                ss_raw.append(states[start_i].get_model_input_s())
+                mid_raw.append(states[start_i + mid].get_model_input_s())
+                ts_raw.append(states[start_i + span].get_model_input_s())
+                layer_idx.append(li)
+
+    if not ss_raw:
         return None, None, None, None
 
-    # Convert to tensors and normalize through PLTA
-    ss_raw = torch.as_tensor(np.stack(result_ss), dtype=torch.float32, device=device)
-    ts_raw = torch.as_tensor(np.stack(result_ts), dtype=torch.float32, device=device)
-    mid_raw = torch.as_tensor(np.stack(result_mid), dtype=torch.float32, device=device)
-    layer_t = torch.as_tensor(np.array(result_layer, dtype=np.int64), dtype=torch.long, device=device)
+    ss_raw = torch.as_tensor(np.stack(ss_raw), dtype=torch.float32, device=device)
+    ts_raw = torch.as_tensor(np.stack(ts_raw), dtype=torch.float32, device=device)
+    mid_raw = torch.as_tensor(np.stack(mid_raw), dtype=torch.float32, device=device)
+    layer_t = torch.as_tensor(np.array(layer_idx, dtype=np.int64), dtype=torch.long, device=device)
 
     with torch.no_grad():
         ss_enc = plta.forward_model_board_normalize(ss_raw)
@@ -160,123 +212,110 @@ def _extract_plhw_samples(trajectories: list[tuple], plta, plhw_layers: int, pre
     return ss_enc, ts_enc, mid_enc, layer_t
 
 
-# ---------------------------------------------------------------------------
-# Training step
-# ---------------------------------------------------------------------------
+def _anchor_state(model):
+    return {k: v.detach().clone() for k, v in model.state_dict().items()}
 
-def train_step_plta(plta, optimizer, ss_t, ts_t, labels_t, batch_size: int, AS: int):
-    """
-    CrossEntropy loss over predicted action sequences.
-    labels_t: (N, PREDICT_STEPS) with values in [0, AS] where AS = stop.
-    """
+
+def _l2sp_penalty(model, anchor, coeff: float):
+    if coeff <= 0:
+        return torch.tensor(0.0, device=next(model.parameters()).device)
+
+    penalty = torch.tensor(0.0, device=next(model.parameters()).device)
+    for name, p in model.named_parameters():
+        if name in anchor:
+            penalty = penalty + torch.mean((p - anchor[name]) ** 2)
+    return coeff * penalty
+
+
+def train_step_plta(plta, optimizer, ss_t, ts_t, labels_t, batch_size: int, anchor, l2sp_coeff: float):
     plta.train()
-    N = ss_t.shape[0]
-    total_loss = 0.0
-    n_batches = 0
-    perm = torch.randperm(N, device=ss_t.device)
+    n = ss_t.shape[0]
+    perm = torch.randperm(n, device=ss_t.device)
+    total_ce = 0.0
+    steps = 0
 
-    b_zero = torch.zeros(batch_size, 1, dtype=torch.long, device=ss_t.device)
-
-    for start in range(0, N, batch_size):
-        idx = perm[start:start + batch_size]
+    for i in range(0, n, batch_size):
+        idx = perm[i:i + batch_size]
         if len(idx) < 2:
             break
-        b = b_zero[:len(idx)]
 
-        ss_norm = plta.forward_model_board_normalize(ss_t[idx])
-        ts_norm = plta.forward_model_board_normalize(ts_t[idx])
+        b = torch.zeros((len(idx), 1), dtype=torch.long, device=ss_t.device)
+        ss_enc = plta.forward_model_board_normalize(ss_t[idx])
+        ts_enc = plta.forward_model_board_normalize(ts_t[idx])
+        logits = plta.forward_model_target_actions__enc(ss_enc, ts_enc, b)
 
-        logits = plta.forward_model_target_actions__enc(ss_norm, ts_norm, b)
-        # logits: (B, PREDICT_STEPS, AS+1)
-        B, T, C = logits.shape
-        loss = torch.nn.functional.cross_entropy(
-            logits.view(B * T, C),
-            labels_t[idx].view(B * T)
-        )
+        bsz, t, c = logits.shape
+        ce = torch.nn.functional.cross_entropy(logits.view(bsz * t, c), labels_t[idx].view(bsz * t))
+        loss = ce + _l2sp_penalty(plta, anchor, l2sp_coeff)
 
         optimizer.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(plta.parameters(), 1.0)
         optimizer.step()
 
-        total_loss += loss.item()
-        n_batches += 1
+        total_ce += float(ce.item())
+        steps += 1
 
-    return total_loss / n_batches if n_batches > 0 else float('nan')
+    return total_ce / steps if steps > 0 else float("nan")
 
 
-def train_step_plhw(plhw, optimizer, ss_enc, ts_enc, mid_enc, layer_t, batch_size: int):
-    """
-    MSE loss between predicted midpoint encoding and actual midpoint encoding.
-    """
+def train_step_plhw(plhw, optimizer, ss_enc, ts_enc, mid_enc, layer_t, batch_size: int, anchor, l2sp_coeff: float):
     plhw.train()
-    N = ss_enc.shape[0]
-    total_loss = 0.0
-    n_batches = 0
-    perm = torch.randperm(N, device=ss_enc.device)
+    n = ss_enc.shape[0]
+    perm = torch.randperm(n, device=ss_enc.device)
+    total_mse = 0.0
+    steps = 0
 
-    b_zero = torch.zeros(batch_size, 1, dtype=torch.long, device=ss_enc.device)
-
-    for start in range(0, N, batch_size):
-        idx = perm[start:start + batch_size]
+    for i in range(0, n, batch_size):
+        idx = perm[i:i + batch_size]
         if len(idx) < 2:
             break
-        b = b_zero[:len(idx)]
 
-        pred_mid = plhw.forward_model_hw(
-            ss=ss_enc[idx],
-            ts=ts_enc[idx],
-            min_max_01=b,
-            layer_idx=layer_t[idx],
-        )
-        target_mid = mid_enc[idx].detach()
-        loss = torch.nn.functional.mse_loss(pred_mid, target_mid)
+        b = torch.zeros((len(idx), 1), dtype=torch.long, device=ss_enc.device)
+        pred = plhw.forward_model_hw(ss=ss_enc[idx], ts=ts_enc[idx], min_max_01=b, layer_idx=layer_t[idx])
+        mse = torch.nn.functional.mse_loss(pred, mid_enc[idx])
+        loss = mse + _l2sp_penalty(plhw, anchor, l2sp_coeff)
 
         optimizer.zero_grad()
         loss.backward()
         torch.nn.utils.clip_grad_norm_(plhw.parameters(), 1.0)
         optimizer.step()
 
-        total_loss += loss.item()
-        n_batches += 1
+        total_mse += float(mse.item())
+        steps += 1
 
-    return total_loss / n_batches if n_batches > 0 else float('nan')
+    return total_mse / steps if steps > 0 else float("nan")
 
-
-# ---------------------------------------------------------------------------
-# Quick solve-rate probe
-# ---------------------------------------------------------------------------
 
 @torch.no_grad()
-def quick_solve_probe(model_keeper, envs_manager, n_games: int, n_max_steps: int, device) -> float:
-    """
-    Quick greedy probe using the last policy layer. Returns solve rate.
-    """
-    from hw_impl import evaluate, env_torch_wrapper, hw_common
+def quick_probe(config, model_keeper, device, probe_levels_path, n_games: int, n_steps: int):
+    env_cfg = dict(config["env"])
+    env_cfg["levels"] = probe_levels_path
+    env_cfg["n_max_episode_steps"] = n_steps
 
-    model_keeper.eval()
+    envs_manager = environments.create_envs_manager(env_cfg)
+    sampler = hw_experience_replay.MemoryEnvsSampler(model_keeper=model_keeper)
+    policies = [
+        evaluate.get_policy(pn, model_keeper, sampler)
+        for pn in evaluate.get_policies(model_keeper, "last")
+    ]
 
-    envs_sampler = hw_experience_replay.MemoryEnvsSampler(model_keeper=model_keeper)
-
-    policy_names = evaluate.get_policies(model_keeper, 'last')
-    policies = [evaluate.get_policy(n, model_keeper, envs_sampler) for n in policy_names]
-
-    config = {
-        'env': {'n_max_episode_steps': n_max_steps},
-        'evaluate': {
-            'targets': 'random',
-            'replan_every_actions': 0,
-            'replan_mismatch_threshold': 0.20,
-            'replan_stall_steps': 10,
-            'min_commit_steps': 4,
-            'progress_every_targets': 0,
-            'progress_every_games': 0,
-        }
+    probe_cfg = {
+        "env": env_cfg,
+        "evaluate": {
+            "targets": "all",
+            "replan_every_actions": 0,
+            "replan_mismatch_threshold": 0.2,
+            "replan_stall_steps": 10,
+            "min_commit_steps": 4,
+            "progress_every_targets": 0,
+            "progress_every_games": 0,
+        },
     }
 
     results = evaluate.validate_puzzle_solving__impl(
-        config=config,
-        method='closed_loop_replan',
+        config=probe_cfg,
+        method="closed_loop_replan",
         device=device,
         envs_manager=envs_manager,
         model_keeper=model_keeper,
@@ -285,146 +324,166 @@ def quick_solve_probe(model_keeper, envs_manager, n_games: int, n_max_steps: int
         towards_or_away_array=[True],
         tensorboard=None,
     )
-    if results:
-        return float(results[0].get('solved_mean', 0.0))
-    return 0.0
+    return float(results[0]["solved_mean"]) if results else 0.0
 
 
-# ---------------------------------------------------------------------------
-# Main training loop
-# ---------------------------------------------------------------------------
+def _pick_level_file(levels_path: str, epoch_i: int):
+    if os.path.isfile(levels_path):
+        return levels_path
+    files = sorted(glob.glob(os.path.join(levels_path, "*.txt")))
+    if not files:
+        raise RuntimeError(f"No level files found under: {levels_path}")
+    return files[(epoch_i - 1) % len(files)]
 
-def train(config: dict, device):
+
+def train(config, device):
     model_keeper = model_mgmt.ModelKeeper(config)
     model_keeper.to(device)
-    print('Checkpoint loaded')
 
-    plta = model_keeper.models['PLTA']
-    plhw = model_keeper.models['PLHW']
-    opt_plta = model_keeper.optimizers['PLTA']
-    opt_plhw = model_keeper.optimizers['PLHW']
-
+    plta = model_keeper.models["PLTA"]
+    plhw = model_keeper.models["PLHW"]
+    opt_plta = model_keeper.optimizers["PLTA"]
+    opt_plhw = model_keeper.optimizers["PLHW"]
     AS = plta.AS
-    PREDICT_STEPS = plta.PREDICT_STEPS
-    PLHW_LAYERS = plhw.PLHW_LAYERS
 
-    tc = config['train']
-    n_epochs = int(tc['epochs'])
-    levels_root = tc['levels']          # may be dir or single file
-    walk_steps = int(tc.get('walk_steps', 128))
-    n_levels_per_epoch = int(tc.get('n_levels_per_epoch', 32))
-    n_walks_per_level = int(tc.get('n_walks_per_level', 4))
-    batch_size = int(tc.get('batch_size', 128))
-    probe_every = int(tc.get('probe_every_epochs', 5))
-    probe_games = int(tc.get('probe_games', 20))
-    probe_steps = int(tc.get('probe_max_steps', 100))
-    save_every = int(tc.get('save_every_epochs', 10))
-    checkpoints_dir = tc.get('checkpoints_dir', 'checkpoints')
-    os.makedirs(checkpoints_dir, exist_ok=True)
+    tc = config["train"]
+    epochs = int(tc["epochs"])
+    levels_path = tc["levels"]
+    probe_levels = tc["probe_levels"]
 
-    # Collect the list of level files to rotate through
-    if os.path.isfile(levels_root):
-        level_files = [levels_root]
-    else:
-        import glob as _glob
-        level_files = sorted(_glob.glob(os.path.join(levels_root, '*.txt')))
-    if not level_files:
-        raise RuntimeError(f"No level files found under: {levels_root}")
-    print(f'Training level files pool: {len(level_files)} file(s)')
+    n_max_episode_steps = int(tc.get("n_max_episode_steps", config["env"].get("n_max_episode_steps", 100)))
+    n_levels_per_epoch = int(tc.get("n_levels_per_epoch", 64))
+    n_attempts_per_level = int(tc.get("n_attempts_per_level", 4))
+    min_commit_steps = int(tc.get("min_commit_steps", 4))
+    min_partial_ratio = float(tc.get("min_partial_ratio", 0.10))
+    min_partial_actions = int(tc.get("min_partial_actions", 4))
+    max_partial_ratio = float(tc.get("max_partial_ratio", 0.30))
+    plhw_min_partial_ratio = float(tc.get("plhw_min_partial_ratio", 0.10))
 
-    # Probe env manager loaded once from a fixed file
-    probe_levels_path = tc.get('probe_levels', level_files[0])
-    if os.path.isfile(probe_levels_path):
-        probe_file = probe_levels_path
-    else:
-        import glob as _glob2
-        probe_files = sorted(_glob2.glob(os.path.join(probe_levels_path, '*.txt')))
-        probe_file = probe_files[0] if probe_files else level_files[0]
-    probe_env_config = dict(config['env'])
-    probe_env_config['levels'] = probe_file
-    probe_envs_manager = environments.create_envs_manager(probe_env_config)
-    print(f'Probe levels: {probe_file}')
+    batch_size = int(tc.get("batch_size", 128))
+    l2sp_plta = float(tc.get("l2sp_plta", 1e-4))
+    l2sp_plhw = float(tc.get("l2sp_plhw", 1e-4))
 
-    # Cache a loaded envs_manager per file to avoid re-parsing every epoch
-    _envs_cache: dict[str, object] = {}
+    probe_every = int(tc.get("probe_every_epochs", 5))
+    probe_games = int(tc.get("probe_games", 20))
+    probe_steps = int(tc.get("probe_max_steps", 100))
+    early_patience = int(tc.get("early_stop_patience", 4))
+    min_probe_improve = float(tc.get("min_probe_improve", 1e-3))
 
-    def _get_envs_manager(filepath: str):
-        if filepath not in _envs_cache:
-            cfg = dict(config['env'])
-            cfg['levels'] = filepath
-            _envs_cache[filepath] = environments.create_envs_manager(cfg)
-        return _envs_cache[filepath]
+    save_every = int(tc.get("save_every_epochs", 20))
+    ckpt_dir = tc.get("checkpoints_dir", "checkpoints")
+    os.makedirs(ckpt_dir, exist_ok=True)
 
-    best_solve_rate = -1.0
+    anchor_plta = _anchor_state(plta)
+    anchor_plhw = _anchor_state(plhw)
 
-    for epoch in range(1, n_epochs + 1):
+    sampler = hw_experience_replay.MemoryEnvsSampler(model_keeper=model_keeper)
+    collector_policy_name = tc.get("collector_policy", "PL0")
+    policy = evaluate.get_policy(collector_policy_name, model_keeper, sampler)
+
+    best_probe = -1.0
+    no_improve = 0
+
+    print(f"Training levels root/file: {levels_path}")
+    print(f"Probe levels: {probe_levels}")
+    print(f"Collector policy: {collector_policy_name}")
+
+    for epoch in range(1, epochs + 1):
         t0 = time.time()
 
-        # Rotate through files (lazy-load and cache)
-        file_idx = (epoch - 1) % len(level_files)
-        cur_file = level_files[file_idx]
-        envs_manager = _get_envs_manager(cur_file)
+        level_file = _pick_level_file(levels_path, epoch)
+        env_cfg = dict(config["env"])
+        env_cfg["levels"] = level_file
+        env_cfg["n_max_episode_steps"] = n_max_episode_steps
+        envs_manager = environments.create_envs_manager(env_cfg)
 
-        # --- Collect trajectories ---
-        trajectories = collect_trajectories(
+        solved_traj, partial_traj, all_traj = collect_guided_trajectories(
             envs_manager=envs_manager,
+            policy=policy,
+            device=device,
+            AS=AS,
             n_levels=n_levels_per_epoch,
-            walk_steps=walk_steps,
-            n_walks_per_level=n_walks_per_level,
+            n_attempts_per_level=n_attempts_per_level,
+            n_max_episode_steps=n_max_episode_steps,
+            min_commit_steps=min_commit_steps,
+            min_partial_ratio=min_partial_ratio,
+            min_partial_actions=min_partial_actions,
         )
-        n_traj = len(trajectories)
-        avg_len = np.mean([len(t) for t in trajectories]) if trajectories else 0
 
-        # --- PLTA training ---
-        ss_t, ts_t, labels_t = _extract_plta_samples(trajectories, plta, PREDICT_STEPS, AS, device)
+        partial_keep = max(8, int(len(solved_traj) * max_partial_ratio))
+        random.shuffle(partial_traj)
+        train_traj = solved_traj + partial_traj[:partial_keep]
+
+        if not train_traj and all_traj:
+            candidates = [x for x in all_traj if len(x[1]) >= max(1, min_partial_actions)]
+            if not candidates:
+                candidates = all_traj
+            candidates = sorted(candidates, key=lambda x: (x[4], len(x[1])), reverse=True)
+            train_traj = candidates[: min(len(candidates), max(16, n_levels_per_epoch // 2))]
+
+        random.shuffle(train_traj)
+
+        if not train_traj:
+            print(f"[Epoch {epoch:4d}/{epochs}] no usable trajectories (solved=0, partial=0, all=0), skip", flush=True)
+            continue
+
+        ss_t, ts_t, labels_t = _extract_plta_samples(train_traj, plta.PREDICT_STEPS, AS, device)
+        ss_enc, ts_enc, mid_enc, layer_t = _extract_plhw_samples(
+            train_traj,
+            plta,
+            plhw.PLHW_LAYERS,
+            plta.PREDICT_STEPS,
+            device,
+            plhw_min_partial_ratio,
+        )
+
+        plta_loss = float("nan")
+        plhw_loss = float("nan")
+
         if ss_t is not None:
-            plta_loss = train_step_plta(plta, opt_plta, ss_t, ts_t, labels_t, batch_size, AS)
-        else:
-            plta_loss = float('nan')
-
-        # --- PLHW training ---
-        ss_enc, ts_enc, mid_enc, layer_t = _extract_plhw_samples(trajectories, plta, PLHW_LAYERS, PREDICT_STEPS, device)
+            plta_loss = train_step_plta(plta, opt_plta, ss_t, ts_t, labels_t, batch_size, anchor_plta, l2sp_plta)
         if ss_enc is not None:
-            plhw_loss = train_step_plhw(plhw, opt_plhw, ss_enc, ts_enc, mid_enc, layer_t, batch_size)
-        else:
-            plhw_loss = float('nan')
+            plhw_loss = train_step_plhw(plhw, opt_plhw, ss_enc, ts_enc, mid_enc, layer_t, batch_size, anchor_plhw, l2sp_plhw)
 
-        elapsed = time.time() - t0
         model_keeper.iter_i += 1
+        elapsed = time.time() - t0
+
+        solved_ratio = len(solved_traj) / max(1, len(solved_traj) + len(partial_traj))
+        avg_len = float(np.mean([len(x[1]) for x in train_traj])) if train_traj else 0.0
 
         print(
-            f'[Epoch {epoch:4d}/{n_epochs}] '
-            f'traj={n_traj} avg_len={avg_len:.1f} | '
-            f'plta_loss={plta_loss:.4f} plhw_loss={plhw_loss:.4f} | '
-            f'{elapsed:.1f}s',
+            f"[Epoch {epoch:4d}/{epochs}] file={os.path.basename(level_file)} "
+            f"solved={len(solved_traj)} partial={len(partial_traj)} all={len(all_traj)} used={len(train_traj)} "
+            f"solved_ratio={solved_ratio:.3f} avg_len={avg_len:.1f} "
+            f"| plta_loss={plta_loss:.4f} plhw_loss={plhw_loss:.4f} | {elapsed:.1f}s",
             flush=True,
         )
 
-        # --- Probe solve rate ---
-        if probe_every > 0 and epoch % probe_every == 0:
-            solve_rate = quick_solve_probe(model_keeper, probe_envs_manager, probe_games, probe_steps, device)
-            print(f'  >>> Probe solve_rate={solve_rate:.3f} (n={probe_games})', flush=True)
-
-            if solve_rate > best_solve_rate:
-                best_solve_rate = solve_rate
-                model_keeper.save_checkpoint(checkpoints_dir, f'[Best {solve_rate:.3f}]')
-
-        # --- Periodic save ---
         if save_every > 0 and epoch % save_every == 0:
-            model_keeper.save_checkpoint(checkpoints_dir, f'[Epoch {epoch}]')
+            model_keeper.save_checkpoint(ckpt_dir, f"[Epoch {epoch}]")
 
-    # Final save
-    model_keeper.save_checkpoint(checkpoints_dir, '[Final]')
-    print(f'Training complete. Best probe solve_rate={best_solve_rate:.3f}')
+        if probe_every > 0 and epoch % probe_every == 0:
+            probe = quick_probe(config, model_keeper, device, probe_levels, probe_games, probe_steps)
+            print(f"  >>> Probe solve_rate={probe:.3f} (n={probe_games})", flush=True)
 
+            if probe > best_probe + min_probe_improve:
+                best_probe = probe
+                no_improve = 0
+                model_keeper.save_checkpoint(ckpt_dir, f"[Best {probe:.3f}]")
+            else:
+                no_improve += 1
+                print(f"  >>> No probe improvement ({no_improve}/{early_patience})", flush=True)
+                if no_improve >= early_patience:
+                    print("  >>> Early stop triggered.", flush=True)
+                    break
 
-# ---------------------------------------------------------------------------
-# Entry point
-# ---------------------------------------------------------------------------
+    model_keeper.save_checkpoint(ckpt_dir, "[Final]")
+    print(f"Training complete. Best probe solve_rate={best_probe:.3f}")
+
 
 def main():
     if len(sys.argv) != 2:
-        print('Usage: python -u src/train_halfweg.py configs/train_finetune_medium.yaml')
+        print("Usage: python -u src/train_halfweg.py configs/train_finetune_medium.yaml")
         sys.exit(1)
 
     with open(sys.argv[1]) as f:
@@ -433,16 +492,15 @@ def main():
     torch.set_num_threads(1)
     torch.autograd.set_detect_anomaly(False)
 
-    if config['infra'].get('device') in (None, 'cpu'):
-        device = 'cpu'
+    if config["infra"].get("device") in (None, "cpu"):
+        device = "cpu"
     else:
-        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    print(f'Device: {device}')
+    print(f"Device: {device}")
     pprint.pprint(config)
-
     train(config, device)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
