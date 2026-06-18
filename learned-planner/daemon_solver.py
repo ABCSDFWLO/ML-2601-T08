@@ -33,7 +33,7 @@ from huggingface_hub import snapshot_download
 
 warnings.filterwarnings("ignore")
 
-MAX_EPISODE_STEPS = 240
+MAX_EPISODE_STEPS = 120
 
 # (parse_boxoban_file, setup_isolated_env 함수는 이전 코드와 동일하게 유지)
 def parse_boxoban_file(filepath):
@@ -134,6 +134,7 @@ def main():
 
         for file_path in target_files:
             file_name = os.path.basename(file_path)
+            print(f"[Daemon] Processing started for: {file_name}")
             for map_id, map_content in parse_boxoban_file(file_path):
                 map_key = f"{file_name}_map_{map_id.zfill(3)}"
                 if map_key in results_data.get("data", {}): continue
@@ -160,7 +161,7 @@ def main():
 
                 # 2. 추론 루프 진입
                 with torch.no_grad():
-                    while not done and step_count < MAX_EPISODE_STEPSs:
+                    while not done and step_count < MAX_EPISODE_STEPS:
                         obs_tensor = torch.tensor(obs, dtype=torch.float32).to(device) / 255.0
                         
                         t0 = time.perf_counter()
