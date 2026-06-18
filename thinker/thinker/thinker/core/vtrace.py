@@ -34,10 +34,25 @@ See https://arxiv.org/abs/1802.01561 for the full paper.
 """
 
 import collections
+
 import torch
 import torch.nn.functional as F
 
-VTraceReturns = collections.namedtuple("VTraceReturns", "vs pg_advantages pg_advantages_nois norm_stat")
+
+VTraceFromLogitsReturns = collections.namedtuple(
+    "VTraceFromLogitsReturns",
+    [
+        "vs",
+        "pg_advantages",
+        "log_rhos",
+        "behavior_action_log_probs",
+        "target_action_log_probs",
+        "norm_stat",
+    ],
+)
+
+VTraceReturns = collections.namedtuple("VTraceReturns", "vs pg_advantages norm_stat")
+
 
 def action_log_probs(policy_logits, actions):
     return -F.nll_loss(
@@ -52,13 +67,15 @@ def adv_l2(target_x, x):
 
 
 @torch.no_grad()
-def compute_v_trace(
+def from_importance_weights(
     log_rhos,
     discounts,
     rewards,
     values,
+    values_enc,
+    rv_tran,
     bootstrap_value,
-    return_norm_type,
+    flags,
     clip_rho_threshold=1.0,
     clip_pg_rho_threshold=1.0,
     lamb=1.0,
@@ -100,41 +117,8 @@ def compute_v_trace(
         else:
             clipped_pg_rhos = rhos
         target_values = rewards + discounts * vs_t_plus_1
-        if not return_norm_type in [0, 1]:
-            norm_stat = None
-        else:
-            if return_norm_type == 0:
-                norm_v = target_values
-            elif return_norm_type == 1:
-                norm_v = target_values - values
-            
-            buffer = norm_stat[-1]
-            buffer.push(norm_v)
-            lq = buffer.get_percentile(0.05)
-            uq = buffer.get_percentile(0.95)
-            norm_stat = (
-                lq,
-                uq,
-            )
-            norm_factor = torch.clamp(
-                norm_stat[1] - norm_stat[0], min=1
-            )
-            norm_stat = norm_stat + (norm_factor, buffer)
-
-        pg_advantages_nois = adv_l2(target_values, values)
-        pg_advantages = clipped_pg_rhos * pg_advantages_nois
-        if return_norm_type in [0, 1]:
-            # pg_advantages = torch.clamp(pg_advantages, norm_stat[0], norm_stat[1])
-            pg_advantages = pg_advantages / norm_factor
-            pg_advantages_nois = pg_advantages_nois / norm_factor
-        elif return_norm_type == 2:
-            pg_advantages = (pg_advantages - pg_advantages.mean()) / (pg_advantages.std() + 1e-8)
-            pg_advantages_nois = (pg_advantages_nois - pg_advantages_nois.mean()) / (pg_advantages_nois.std() + 1e-8)
-
+        norm_stat = None
+        pg_advantages = clipped_pg_rhos * adv_l2(target_values, values)
 
         # Make sure no gradients backpropagated through the returned values.
-        return VTraceReturns(vs=vs, 
-                             pg_advantages=pg_advantages, 
-                             pg_advantages_nois=pg_advantages_nois,
-                             norm_stat=norm_stat)
-
+        return VTraceReturns(vs=vs, pg_advantages=pg_advantages, norm_stat=norm_stat)

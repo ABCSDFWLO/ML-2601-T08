@@ -25,7 +25,7 @@ import logging
 import os
 import time
 from typing import Dict
-import warnings
+
 
 def gather_metadata() -> Dict:
     date_start = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
@@ -110,8 +110,7 @@ class FileWriter:
             self._logger.info("Creating log directory: %s", self.basepath)
             os.makedirs(self.basepath, exist_ok=True)
         else:
-            pass
-            #self._logger.info("Found log directory: %s", self.basepath)
+            self._logger.info("Found log directory: %s", self.basepath)
 
         if symlink_to_latest:
             # Add 'latest' as symlink unless it exists and is no symlink.
@@ -129,6 +128,9 @@ class FileWriter:
         self.paths = dict(
             msg="{base}/out{suffix}.log".format(base=self.basepath, suffix=suffix),
             logs="{base}/logs{suffix}.csv".format(base=self.basepath, suffix=suffix),
+            fields="{base}/fields{suffix}.csv".format(
+                base=self.basepath, suffix=suffix
+            ),
             meta="{base}/meta{suffix}.json".format(base=self.basepath, suffix=suffix),
         )
 
@@ -155,11 +157,18 @@ class FileWriter:
         self._logger.addHandler(fhandle)
 
         self._logger.info("Saving logs data to %s", self.paths["logs"])
+        self._logger.info("Saving logs' fields to %s", self.paths["fields"])
         self.fieldnames = ["_tick", "_time"]
         if os.path.exists(self.paths["logs"]):
             self._logger.warning(
                 "Path to log file already exists. " "New data will be appended."
             )
+            # Override default fieldnames.
+            with open(self.paths["fields"], "r") as csvfile:
+                reader = csv.reader(csvfile)
+                lines = list(reader)
+                if len(lines) > 0:
+                    self.fieldnames = lines[-1]
             # Override default tick: use the last tick from the logs file plus 1.
             with open(self.paths["logs"], "r") as csvfile:
                 reader = csv.reader(csvfile)
@@ -167,32 +176,32 @@ class FileWriter:
                 # Need at least two lines in order to read the last tick:
                 # the first is the csv header and the second is the first line
                 # of data.
-                if len(lines) > 0:
-                    self.fieldnames = lines[0]
-                    if "# _tick" in self.fieldnames:
-                        self.fieldnames = [x if x != "# _tick" else "_tick" for x in self.fieldnames]
-                if len(lines) >= 2 and len(lines[-2]) > 0:
-                    try:
-                        self._tick = int(lines[-2][0]) + 1
-                    except Exception as e:
-                        warnings.warn(f"Warning: An exception occurred: {e}")
-            
+                if len(lines) > 1:
+                    self._tick = int(lines[-2][0]) + 1
+
+        self._fieldfile = open(self.paths["fields"], "a")
+        self._fieldwriter = csv.writer(self._fieldfile)
         self._logfile = open(self.paths["logs"], "a")
         self._logwriter = csv.DictWriter(self._logfile, fieldnames=self.fieldnames)
 
-    def log(self, to_log: Dict, verbose: bool = False) -> None:     
-        to_log["_tick"] = self._tick
-        self._tick += 1
-        to_log["_time"] = time.time()        
+    def log(self, to_log: Dict, tick: int = None, verbose: bool = False) -> None:
+        if tick is not None:
+            raise NotImplementedError
+        else:
+            to_log["_tick"] = self._tick
+            self._tick += 1
+        to_log["_time"] = time.time()
 
         old_len = len(self.fieldnames)
         for k in to_log:
             if k not in self.fieldnames:
                 self.fieldnames.append(k)
+        if old_len != len(self.fieldnames):
+            self._fieldwriter.writerow(self.fieldnames)
+            self._logger.info("Updated log fields: %s", self.fieldnames)
 
         if to_log["_tick"] == 0:
-            self._logfile.write("%s\n" % ",".join(self.fieldnames))
-            self.fieldnames                
+            self._logfile.write("# %s\n" % ",".join(self.fieldnames))
 
         if verbose:
             self._logger.info(
@@ -210,7 +219,8 @@ class FileWriter:
         self.metadata["successful"] = successful
         self._save_metadata()
 
-        self._logfile.close()
+        for f in [self._logfile, self._fieldfile]:
+            f.close()
 
     def _save_metadata(self) -> None:
         with open(self.paths["meta"], "w") as jsonfile:
