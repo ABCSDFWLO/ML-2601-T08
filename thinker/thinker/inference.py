@@ -88,18 +88,23 @@ def run_inference(flags, maps):
         
         aug_step_count = 0
         real_step_count = 0
-        accumulated_inf_time = 0.0
+        
+        # 누적 시간 측정용 변수 초기화
+        accumulated_inference_time = 0.0
+        accumulated_planning_time = 0.0
+        
         solution = []
         status = "failed"
         done = False
         
         while not done:
             aug_step_count += 1
+            
+            # 1. 정책 네트워크 추론 시간 측정 (기존 inference_time_ms)
             inf_start_time = time.perf_counter()
             with torch.no_grad():
                 actor_out, core_state = actor_net(obs, core_state, greedy=getattr(flags, 'greedy', False))
-            inf_time_ms = (time.perf_counter() - inf_start_time) * 1000
-            accumulated_inf_time += inf_time_ms
+            accumulated_inference_time += (time.perf_counter() - inf_start_time) * 1000
             
             env_action = torch.zeros(1, 1, 3, dtype=torch.long, device=device)
             env_action[0, 0, 0] = actor_out.action.item()
@@ -107,40 +112,44 @@ def run_inference(flags, maps):
                 env_action[0, 0, 1] = actor_out.im_action.item()
                 env_action[0, 0, 2] = actor_out.reset_action.item()
             
-            # 환경에 액션 주입 및 상태 갱신
+            # 2. 월드 모델 예측 및 환경 시뮬레이션 시간 측정 (신규 planning_time_ms)
+            env_start_time = time.perf_counter()
             obs = env.step(env_action, model_net=model_net)
+            accumulated_planning_time += (time.perf_counter() - env_start_time) * 1000
             
-            # Thinker 내부 타이머(cur_t)가 0으로 롤백되는 순간이 19번의 가상 탐색이 끝난 실제 행동 적용 시점임
             if obs.cur_t.item() == 0:
                 real_step_count += 1
                 action_str = get_action_string(actor_out.action.item())
                 
-                #print(f"[DEBUG] Map {map_id} | Real Step {real_step_count} (Aug: {aug_step_count}) | Action: {action_str} | Planning Time: {accumulated_inf_time:.2f}ms")
+                #print(f"[DEBUG] Map {map_id} | Real Step {real_step_count} | Action: {action_str} | Inference: {accumulated_inference_time:.2f}ms | Planning: {accumulated_planning_time:.2f}ms")
                 
                 solution.append({
                     "step": real_step_count,
-                    "forward_time": round(accumulated_inf_time, 4),
+                    "forward_time": round(accumulated_inference_time, 4),
+                    "planning_time": round(accumulated_planning_time, 4),
                     "action": action_str
                 })
-                # 다음 실제 행동을 위한 누적 시간 초기화
-                accumulated_inf_time = 0.0
+                # 다음 실제 행동 측정을 위해 누적 시간 초기화
+                accumulated_inference_time = 0.0
+                accumulated_planning_time = 0.0
             
             if obs.real_done.item() or obs.truncated_done.item() or real_step_count >= 120:
                 done = True
-                # 소코반 최종 클리어 보상(+10.0) 판별을 위해 임계치를 5.0으로 상향
                 if obs.reward.item() > 5.0:
                     status = "success"
                 print(f"[DEBUG] Map {map_id} finished at real step {real_step_count}. Status: {status}")
                 break
                 
         total_sys_time_ms = (time.perf_counter() - sys_start_time) * 1000
-        total_inf_time_ms = sum(step["forward_time"] for step in solution)
+        total_inference_time_ms = sum(step["forward_time"] for step in solution)
+        total_planning_time_ms = sum(step["planning_time"] for step in solution)
         
-        map_key = f"{os.path.basename(flags.map_path)}_map_{int(map_id):03d}"
+        map_key = f"map_{int(map_id):03d}"
         results["data"][map_key] = {
             "status": status,
             "steps": real_step_count,
-            "inference_time_ms": round(total_inf_time_ms, 2),
+            "inference_time_ms": round(total_inference_time_ms, 2),
+            "planning_time_ms": round(total_planning_time_ms, 2),
             "total_system_time_ms": round(total_sys_time_ms, 2),
             "solution": solution
         }
