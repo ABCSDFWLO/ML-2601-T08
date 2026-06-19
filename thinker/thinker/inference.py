@@ -36,11 +36,7 @@ def parse_boxoban_txt(file_path):
     return maps
 
 def duplicate_and_force_map(map_data):
-    """
-    더미 박스 패딩 없이 원본 맵 그대로를 C++ 환경 강제 규격(1000개)에 맞춰 복사합니다.
-    """
     grid = [row[:10].ljust(10, ' ') for row in map_data]
-    original_boxes = sum(row.count('$') + row.count('*') for row in grid)
     
     test_dir = "/workspace/csokoban/gym_csokoban/envs/boxoban-levels/unfiltered/test"
     os.makedirs(test_dir, exist_ok=True)
@@ -55,8 +51,6 @@ def duplicate_and_force_map(map_data):
             for line in grid:
                 f.write(line + "\n")
             f.write("\n")
-            
-    return original_boxes
 
 def run_inference(flags, maps):
     device = torch.device("cuda" if torch.cuda.is_available() and not getattr(flags, 'disable_cuda', False) else "cpu")
@@ -77,8 +71,7 @@ def run_inference(flags, maps):
         print(f"\n--- [DEBUG] Processing Map {map_id} ---")
         sys_start_time = time.perf_counter()
         
-        original_boxes = duplicate_and_force_map(map_data)
-        print(f"[DEBUG] Original logical boxes: {original_boxes}. Injected purely.")
+        duplicate_and_force_map(map_data)
         
         env = Environment(flags, model_wrap=True, env_n=1, device=device)
         
@@ -93,31 +86,20 @@ def run_inference(flags, maps):
         obs = env.initial(model_net=model_net)
         core_state = actor_net.initial_state(batch_size=1, device=device)
         
-        step_count = 0
+        aug_step_count = 0
+        real_step_count = 0
+        accumulated_inf_time = 0.0
         solution = []
         status = "failed"
         done = False
         
-        boxes_on_target = sum(row.count('*') + row.count('+') for row in map_data)
-        
         while not done:
-            step_count += 1
+            aug_step_count += 1
             inf_start_time = time.perf_counter()
             with torch.no_grad():
                 actor_out, core_state = actor_net(obs, core_state, greedy=getattr(flags, 'greedy', False))
             inf_time_ms = (time.perf_counter() - inf_start_time) * 1000
-            
-            action_tensor = actor_out.action
-            action_idx = action_tensor.item()
-            action_str = get_action_string(action_idx)
-            
-            print(f"[DEBUG] Map {map_id} | Step {step_count} | Action: {action_str} | Inf Time: {inf_time_ms:.2f}ms")
-            
-            solution.append({
-                "step": step_count,
-                "forward_time": round(inf_time_ms, 4),
-                "action": action_str
-            })
+            accumulated_inf_time += inf_time_ms
             
             env_action = torch.zeros(1, 1, 3, dtype=torch.long, device=device)
             env_action[0, 0, 0] = actor_out.action.item()
@@ -125,23 +107,30 @@ def run_inference(flags, maps):
                 env_action[0, 0, 1] = actor_out.im_action.item()
                 env_action[0, 0, 2] = actor_out.reset_action.item()
             
+            # 환경에 액션 주입 및 상태 갱신
             obs = env.step(env_action, model_net=model_net)
             
-            step_reward = obs.reward.item()
-            if step_reward > 0.5:
-                boxes_on_target += 1
-            elif step_reward < -0.5:
-                boxes_on_target -= 1
+            # Thinker 내부 타이머(cur_t)가 0으로 롤백되는 순간이 19번의 가상 탐색이 끝난 실제 행동 적용 시점임
+            if obs.cur_t.item() == 0:
+                real_step_count += 1
+                action_str = get_action_string(actor_out.action.item())
+                
+                #print(f"[DEBUG] Map {map_id} | Real Step {real_step_count} (Aug: {aug_step_count}) | Action: {action_str} | Planning Time: {accumulated_inf_time:.2f}ms")
+                
+                solution.append({
+                    "step": real_step_count,
+                    "forward_time": round(accumulated_inf_time, 4),
+                    "action": action_str
+                })
+                # 다음 실제 행동을 위한 누적 시간 초기화
+                accumulated_inf_time = 0.0
             
-            if boxes_on_target >= original_boxes:
+            if obs.real_done.item() or obs.truncated_done.item() or real_step_count >= 120:
                 done = True
-                status = "success"
-                print(f"[DEBUG] Map {map_id} solved logically at step {step_count}.")
-                break
-            
-            if obs.real_done.item() or obs.truncated_done.item() or step_count > 120:
-                done = True
-                print(f"[DEBUG] Map {map_id} finished (failed/truncated) at step {step_count}.")
+                # 소코반 최종 클리어 보상(+10.0) 판별을 위해 임계치를 5.0으로 상향
+                if obs.reward.item() > 5.0:
+                    status = "success"
+                print(f"[DEBUG] Map {map_id} finished at real step {real_step_count}. Status: {status}")
                 break
                 
         total_sys_time_ms = (time.perf_counter() - sys_start_time) * 1000
@@ -150,7 +139,7 @@ def run_inference(flags, maps):
         map_key = f"{os.path.basename(flags.map_path)}_map_{int(map_id):03d}"
         results["data"][map_key] = {
             "status": status,
-            "steps": step_count,
+            "steps": real_step_count,
             "inference_time_ms": round(total_inf_time_ms, 2),
             "total_system_time_ms": round(total_sys_time_ms, 2),
             "solution": solution
@@ -165,6 +154,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--load_checkpoint", required=True, type=str)
     parser.add_argument("--map_path", required=True, type=str)
+    parser.add_argument("--greedy", action="store_true")
+    parser.add_argument("--rec_t", type=int, default=20)
+    parser.add_argument("--test_rec_t", type=int, default=-1)
 
     flags, unparsed_args = parser.parse_known_args()
     flags_ = util.parse(unparsed_args)
@@ -175,6 +167,12 @@ if __name__ == "__main__":
     maps = parse_boxoban_txt(flags.map_path)
     json_result = run_inference(flags, maps)
     
-    with open("results.json", "w") as f:
+    # 파일 경로에서 확장자를 제외한 순수 파일명 추출 (예: testsokoban)
+    base_filename = os.path.splitext(os.path.basename(flags.map_path))[0]
+    
+    # 요구사항에 맞춘 동적 파일명 생성
+    output_json_name = f"thinker_{base_filename}_{flags.rec_t}_results.json"
+    
+    with open(output_json_name, "w", encoding="utf-8") as f:
         json.dump(json_result, f, indent=4)
-        print("[DEBUG] Results successfully saved to results.json")
+        print(f"[DEBUG] Results successfully saved to {output_json_name}")

@@ -2,2248 +2,498 @@
     "data": {
         "testsokoban.txt_map_000": {
             "status": "success",
-            "steps": 80,
-            "inference_time_ms": 1313.28,
-            "total_system_time_ms": 3117.76,
+            "steps": 4,
+            "inference_time_ms": 1560.84,
+            "total_system_time_ms": 4018.32,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 633.8097,
-                    "action": "L"
+                    "forward_time": 977.0914,
+                    "action": "R"
                 },
                 {
                     "step": 2,
-                    "forward_time": 8.6912,
+                    "forward_time": 136.6676,
                     "action": "R"
                 },
                 {
                     "step": 3,
-                    "forward_time": 8.9921,
+                    "forward_time": 317.7951,
                     "action": "R"
                 },
                 {
                     "step": 4,
-                    "forward_time": 8.3776,
-                    "action": "R"
-                },
-                {
-                    "step": 5,
-                    "forward_time": 8.6564,
-                    "action": "R"
-                },
-                {
-                    "step": 6,
-                    "forward_time": 9.034,
-                    "action": "R"
-                },
-                {
-                    "step": 7,
-                    "forward_time": 8.9682,
-                    "action": "R"
-                },
-                {
-                    "step": 8,
-                    "forward_time": 8.5013,
-                    "action": "R"
-                },
-                {
-                    "step": 9,
-                    "forward_time": 8.5762,
-                    "action": "R"
-                },
-                {
-                    "step": 10,
-                    "forward_time": 8.4145,
-                    "action": "R"
-                },
-                {
-                    "step": 11,
-                    "forward_time": 8.6756,
-                    "action": "R"
-                },
-                {
-                    "step": 12,
-                    "forward_time": 8.274,
-                    "action": "R"
-                },
-                {
-                    "step": 13,
-                    "forward_time": 8.8188,
-                    "action": "R"
-                },
-                {
-                    "step": 14,
-                    "forward_time": 8.4385,
-                    "action": "R"
-                },
-                {
-                    "step": 15,
-                    "forward_time": 8.7413,
-                    "action": "R"
-                },
-                {
-                    "step": 16,
-                    "forward_time": 7.9711,
-                    "action": "R"
-                },
-                {
-                    "step": 17,
-                    "forward_time": 9.1115,
-                    "action": "R"
-                },
-                {
-                    "step": 18,
-                    "forward_time": 8.4732,
-                    "action": "R"
-                },
-                {
-                    "step": 19,
-                    "forward_time": 9.294,
-                    "action": "R"
-                },
-                {
-                    "step": 20,
-                    "forward_time": 8.6842,
-                    "action": "R"
-                },
-                {
-                    "step": 21,
-                    "forward_time": 8.301,
-                    "action": "R"
-                },
-                {
-                    "step": 22,
-                    "forward_time": 8.5264,
-                    "action": "R"
-                },
-                {
-                    "step": 23,
-                    "forward_time": 8.6127,
-                    "action": "R"
-                },
-                {
-                    "step": 24,
-                    "forward_time": 8.3268,
-                    "action": "R"
-                },
-                {
-                    "step": 25,
-                    "forward_time": 9.1689,
-                    "action": "R"
-                },
-                {
-                    "step": 26,
-                    "forward_time": 8.8108,
-                    "action": "R"
-                },
-                {
-                    "step": 27,
-                    "forward_time": 8.6468,
-                    "action": "R"
-                },
-                {
-                    "step": 28,
-                    "forward_time": 8.0371,
-                    "action": "R"
-                },
-                {
-                    "step": 29,
-                    "forward_time": 8.635,
-                    "action": "R"
-                },
-                {
-                    "step": 30,
-                    "forward_time": 8.6789,
-                    "action": "R"
-                },
-                {
-                    "step": 31,
-                    "forward_time": 8.4958,
-                    "action": "R"
-                },
-                {
-                    "step": 32,
-                    "forward_time": 8.5287,
-                    "action": "R"
-                },
-                {
-                    "step": 33,
-                    "forward_time": 8.5727,
-                    "action": "R"
-                },
-                {
-                    "step": 34,
-                    "forward_time": 7.8301,
-                    "action": "R"
-                },
-                {
-                    "step": 35,
-                    "forward_time": 9.11,
-                    "action": "R"
-                },
-                {
-                    "step": 36,
-                    "forward_time": 8.5302,
-                    "action": "R"
-                },
-                {
-                    "step": 37,
-                    "forward_time": 9.2084,
-                    "action": "R"
-                },
-                {
-                    "step": 38,
-                    "forward_time": 9.2531,
-                    "action": "R"
-                },
-                {
-                    "step": 39,
-                    "forward_time": 8.2558,
-                    "action": "R"
-                },
-                {
-                    "step": 40,
-                    "forward_time": 8.2504,
-                    "action": "R"
-                },
-                {
-                    "step": 41,
-                    "forward_time": 8.0008,
-                    "action": "R"
-                },
-                {
-                    "step": 42,
-                    "forward_time": 8.5971,
-                    "action": "R"
-                },
-                {
-                    "step": 43,
-                    "forward_time": 8.7078,
-                    "action": "R"
-                },
-                {
-                    "step": 44,
-                    "forward_time": 9.5951,
-                    "action": "R"
-                },
-                {
-                    "step": 45,
-                    "forward_time": 10.1126,
-                    "action": "NOOP"
-                },
-                {
-                    "step": 46,
-                    "forward_time": 9.4541,
-                    "action": "R"
-                },
-                {
-                    "step": 47,
-                    "forward_time": 8.4878,
-                    "action": "D"
-                },
-                {
-                    "step": 48,
-                    "forward_time": 8.9305,
-                    "action": "R"
-                },
-                {
-                    "step": 49,
-                    "forward_time": 8.3974,
-                    "action": "R"
-                },
-                {
-                    "step": 50,
-                    "forward_time": 8.7692,
-                    "action": "R"
-                },
-                {
-                    "step": 51,
-                    "forward_time": 8.4316,
-                    "action": "R"
-                },
-                {
-                    "step": 52,
-                    "forward_time": 9.6123,
-                    "action": "R"
-                },
-                {
-                    "step": 53,
-                    "forward_time": 9.3496,
-                    "action": "R"
-                },
-                {
-                    "step": 54,
-                    "forward_time": 9.9352,
-                    "action": "R"
-                },
-                {
-                    "step": 55,
-                    "forward_time": 8.1978,
-                    "action": "R"
-                },
-                {
-                    "step": 56,
-                    "forward_time": 8.813,
-                    "action": "R"
-                },
-                {
-                    "step": 57,
-                    "forward_time": 9.4024,
-                    "action": "R"
-                },
-                {
-                    "step": 58,
-                    "forward_time": 8.7201,
-                    "action": "R"
-                },
-                {
-                    "step": 59,
-                    "forward_time": 8.6126,
-                    "action": "R"
-                },
-                {
-                    "step": 60,
-                    "forward_time": 8.1654,
-                    "action": "R"
-                },
-                {
-                    "step": 61,
-                    "forward_time": 8.1891,
-                    "action": "R"
-                },
-                {
-                    "step": 62,
-                    "forward_time": 8.3123,
-                    "action": "R"
-                },
-                {
-                    "step": 63,
-                    "forward_time": 8.0237,
-                    "action": "R"
-                },
-                {
-                    "step": 64,
-                    "forward_time": 8.528,
-                    "action": "U"
-                },
-                {
-                    "step": 65,
-                    "forward_time": 8.2189,
-                    "action": "R"
-                },
-                {
-                    "step": 66,
-                    "forward_time": 8.2201,
-                    "action": "R"
-                },
-                {
-                    "step": 67,
-                    "forward_time": 8.1985,
-                    "action": "R"
-                },
-                {
-                    "step": 68,
-                    "forward_time": 8.4678,
-                    "action": "R"
-                },
-                {
-                    "step": 69,
-                    "forward_time": 8.5911,
-                    "action": "R"
-                },
-                {
-                    "step": 70,
-                    "forward_time": 8.2056,
-                    "action": "R"
-                },
-                {
-                    "step": 71,
-                    "forward_time": 8.2752,
-                    "action": "R"
-                },
-                {
-                    "step": 72,
-                    "forward_time": 8.0584,
-                    "action": "R"
-                },
-                {
-                    "step": 73,
-                    "forward_time": 8.3509,
-                    "action": "R"
-                },
-                {
-                    "step": 74,
-                    "forward_time": 8.433,
-                    "action": "R"
-                },
-                {
-                    "step": 75,
-                    "forward_time": 7.7987,
-                    "action": "R"
-                },
-                {
-                    "step": 76,
-                    "forward_time": 8.0746,
-                    "action": "R"
-                },
-                {
-                    "step": 77,
-                    "forward_time": 8.1938,
-                    "action": "R"
-                },
-                {
-                    "step": 78,
-                    "forward_time": 8.3122,
-                    "action": "R"
-                },
-                {
-                    "step": 79,
-                    "forward_time": 8.3978,
-                    "action": "R"
-                },
-                {
-                    "step": 80,
-                    "forward_time": 7.8598,
+                    "forward_time": 129.2844,
                     "action": "R"
                 }
             ]
         },
         "testsokoban.txt_map_001": {
-            "status": "failed",
-            "steps": 121,
-            "inference_time_ms": 1408.24,
-            "total_system_time_ms": 3005.14,
+            "status": "success",
+            "steps": 37,
+            "inference_time_ms": 7286.8,
+            "total_system_time_ms": 13366.78,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 30.5699,
+                    "forward_time": 234.9333,
                     "action": "R"
                 },
                 {
                     "step": 2,
-                    "forward_time": 28.1134,
+                    "forward_time": 135.339,
                     "action": "R"
                 },
                 {
                     "step": 3,
-                    "forward_time": 27.7024,
-                    "action": "D"
+                    "forward_time": 133.5562,
+                    "action": "U"
                 },
                 {
                     "step": 4,
-                    "forward_time": 27.8995,
-                    "action": "R"
+                    "forward_time": 140.3402,
+                    "action": "U"
                 },
                 {
                     "step": 5,
-                    "forward_time": 29.3421,
-                    "action": "D"
+                    "forward_time": 141.2428,
+                    "action": "U"
                 },
                 {
                     "step": 6,
-                    "forward_time": 28.172,
-                    "action": "R"
+                    "forward_time": 144.6289,
+                    "action": "U"
                 },
                 {
                     "step": 7,
-                    "forward_time": 28.8643,
-                    "action": "R"
+                    "forward_time": 132.4875,
+                    "action": "L"
                 },
                 {
                     "step": 8,
-                    "forward_time": 29.0296,
-                    "action": "R"
+                    "forward_time": 130.2805,
+                    "action": "L"
                 },
                 {
                     "step": 9,
-                    "forward_time": 28.3528,
+                    "forward_time": 133.301,
                     "action": "D"
                 },
                 {
                     "step": 10,
-                    "forward_time": 27.6975,
-                    "action": "R"
+                    "forward_time": 133.5443,
+                    "action": "L"
                 },
                 {
                     "step": 11,
-                    "forward_time": 28.3283,
-                    "action": "R"
+                    "forward_time": 132.0569,
+                    "action": "U"
                 },
                 {
                     "step": 12,
-                    "forward_time": 28.4204,
-                    "action": "R"
+                    "forward_time": 133.7446,
+                    "action": "L"
                 },
                 {
                     "step": 13,
-                    "forward_time": 28.9903,
-                    "action": "R"
+                    "forward_time": 136.8681,
+                    "action": "D"
                 },
                 {
                     "step": 14,
-                    "forward_time": 27.7397,
-                    "action": "R"
+                    "forward_time": 131.2941,
+                    "action": "L"
                 },
                 {
                     "step": 15,
-                    "forward_time": 28.0982,
-                    "action": "R"
+                    "forward_time": 132.3632,
+                    "action": "U"
                 },
                 {
                     "step": 16,
-                    "forward_time": 28.3961,
+                    "forward_time": 249.8212,
                     "action": "R"
                 },
                 {
                     "step": 17,
-                    "forward_time": 29.1309,
+                    "forward_time": 440.1378,
                     "action": "R"
                 },
                 {
                     "step": 18,
-                    "forward_time": 28.1048,
-                    "action": "R"
+                    "forward_time": 129.1653,
+                    "action": "U"
                 },
                 {
                     "step": 19,
-                    "forward_time": 28.2601,
+                    "forward_time": 133.7662,
                     "action": "R"
                 },
                 {
                     "step": 20,
-                    "forward_time": 28.9838,
-                    "action": "R"
+                    "forward_time": 129.5739,
+                    "action": "U"
                 },
                 {
                     "step": 21,
-                    "forward_time": 8.5189,
-                    "action": "R"
+                    "forward_time": 205.6051,
+                    "action": "L"
                 },
                 {
                     "step": 22,
-                    "forward_time": 8.465,
-                    "action": "D"
+                    "forward_time": 136.1511,
+                    "action": "L"
                 },
                 {
                     "step": 23,
-                    "forward_time": 8.3013,
-                    "action": "R"
-                },
-                {
-                    "step": 24,
-                    "forward_time": 8.3065,
+                    "forward_time": 129.7135,
                     "action": "D"
                 },
                 {
+                    "step": 24,
+                    "forward_time": 129.0154,
+                    "action": "R"
+                },
+                {
                     "step": 25,
-                    "forward_time": 8.5147,
+                    "forward_time": 132.125,
                     "action": "D"
                 },
                 {
                     "step": 26,
-                    "forward_time": 8.6428,
-                    "action": "R"
+                    "forward_time": 132.9588,
+                    "action": "D"
                 },
                 {
                     "step": 27,
-                    "forward_time": 8.2484,
+                    "forward_time": 133.9598,
                     "action": "R"
                 },
                 {
                     "step": 28,
-                    "forward_time": 8.4151,
+                    "forward_time": 139.8379,
                     "action": "R"
                 },
                 {
                     "step": 29,
-                    "forward_time": 8.4721,
-                    "action": "R"
+                    "forward_time": 144.422,
+                    "action": "U"
                 },
                 {
                     "step": 30,
-                    "forward_time": 8.1664,
+                    "forward_time": 517.8341,
                     "action": "R"
                 },
                 {
                     "step": 31,
-                    "forward_time": 8.5619,
-                    "action": "R"
-                },
-                {
-                    "step": 32,
-                    "forward_time": 8.0494,
-                    "action": "R"
-                },
-                {
-                    "step": 33,
-                    "forward_time": 8.1906,
-                    "action": "R"
-                },
-                {
-                    "step": 34,
-                    "forward_time": 8.6245,
-                    "action": "R"
-                },
-                {
-                    "step": 35,
-                    "forward_time": 8.074,
-                    "action": "R"
-                },
-                {
-                    "step": 36,
-                    "forward_time": 8.4512,
-                    "action": "R"
-                },
-                {
-                    "step": 37,
-                    "forward_time": 8.3485,
-                    "action": "R"
-                },
-                {
-                    "step": 38,
-                    "forward_time": 8.6923,
-                    "action": "R"
-                },
-                {
-                    "step": 39,
-                    "forward_time": 8.5168,
-                    "action": "R"
-                },
-                {
-                    "step": 40,
-                    "forward_time": 8.6089,
-                    "action": "R"
-                },
-                {
-                    "step": 41,
-                    "forward_time": 8.8445,
-                    "action": "L"
-                },
-                {
-                    "step": 42,
-                    "forward_time": 8.2923,
-                    "action": "U"
-                },
-                {
-                    "step": 43,
-                    "forward_time": 8.9361,
-                    "action": "U"
-                },
-                {
-                    "step": 44,
-                    "forward_time": 8.4998,
-                    "action": "U"
-                },
-                {
-                    "step": 45,
-                    "forward_time": 7.8942,
-                    "action": "U"
-                },
-                {
-                    "step": 46,
-                    "forward_time": 7.8684,
-                    "action": "U"
-                },
-                {
-                    "step": 47,
-                    "forward_time": 9.2088,
-                    "action": "U"
-                },
-                {
-                    "step": 48,
-                    "forward_time": 7.7679,
-                    "action": "U"
-                },
-                {
-                    "step": 49,
-                    "forward_time": 8.5195,
-                    "action": "U"
-                },
-                {
-                    "step": 50,
-                    "forward_time": 8.6865,
-                    "action": "U"
-                },
-                {
-                    "step": 51,
-                    "forward_time": 7.8901,
-                    "action": "U"
-                },
-                {
-                    "step": 52,
-                    "forward_time": 8.3726,
-                    "action": "U"
-                },
-                {
-                    "step": 53,
-                    "forward_time": 8.6736,
-                    "action": "U"
-                },
-                {
-                    "step": 54,
-                    "forward_time": 8.2564,
-                    "action": "U"
-                },
-                {
-                    "step": 55,
-                    "forward_time": 8.1072,
-                    "action": "U"
-                },
-                {
-                    "step": 56,
-                    "forward_time": 8.2817,
-                    "action": "U"
-                },
-                {
-                    "step": 57,
-                    "forward_time": 8.0153,
-                    "action": "U"
-                },
-                {
-                    "step": 58,
-                    "forward_time": 8.1321,
-                    "action": "U"
-                },
-                {
-                    "step": 59,
-                    "forward_time": 10.3633,
-                    "action": "U"
-                },
-                {
-                    "step": 60,
-                    "forward_time": 28.7806,
-                    "action": "U"
-                },
-                {
-                    "step": 61,
-                    "forward_time": 7.7484,
-                    "action": "U"
-                },
-                {
-                    "step": 62,
-                    "forward_time": 7.8995,
-                    "action": "U"
-                },
-                {
-                    "step": 63,
-                    "forward_time": 7.8907,
-                    "action": "U"
-                },
-                {
-                    "step": 64,
-                    "forward_time": 7.9343,
-                    "action": "U"
-                },
-                {
-                    "step": 65,
-                    "forward_time": 8.0873,
-                    "action": "U"
-                },
-                {
-                    "step": 66,
-                    "forward_time": 8.4673,
-                    "action": "U"
-                },
-                {
-                    "step": 67,
-                    "forward_time": 8.1405,
-                    "action": "U"
-                },
-                {
-                    "step": 68,
-                    "forward_time": 7.6109,
-                    "action": "U"
-                },
-                {
-                    "step": 69,
-                    "forward_time": 8.4544,
-                    "action": "U"
-                },
-                {
-                    "step": 70,
-                    "forward_time": 8.1891,
-                    "action": "U"
-                },
-                {
-                    "step": 71,
-                    "forward_time": 8.2522,
-                    "action": "U"
-                },
-                {
-                    "step": 72,
-                    "forward_time": 8.0897,
-                    "action": "U"
-                },
-                {
-                    "step": 73,
-                    "forward_time": 7.3757,
-                    "action": "U"
-                },
-                {
-                    "step": 74,
-                    "forward_time": 8.1754,
-                    "action": "U"
-                },
-                {
-                    "step": 75,
-                    "forward_time": 7.8105,
-                    "action": "U"
-                },
-                {
-                    "step": 76,
-                    "forward_time": 8.262,
-                    "action": "U"
-                },
-                {
-                    "step": 77,
-                    "forward_time": 8.2205,
-                    "action": "U"
-                },
-                {
-                    "step": 78,
-                    "forward_time": 8.1665,
-                    "action": "U"
-                },
-                {
-                    "step": 79,
-                    "forward_time": 7.9586,
-                    "action": "U"
-                },
-                {
-                    "step": 80,
-                    "forward_time": 7.8477,
-                    "action": "U"
-                },
-                {
-                    "step": 81,
-                    "forward_time": 8.2921,
-                    "action": "U"
-                },
-                {
-                    "step": 82,
-                    "forward_time": 7.4321,
-                    "action": "U"
-                },
-                {
-                    "step": 83,
-                    "forward_time": 8.2423,
-                    "action": "U"
-                },
-                {
-                    "step": 84,
-                    "forward_time": 7.7897,
-                    "action": "R"
-                },
-                {
-                    "step": 85,
-                    "forward_time": 7.3046,
-                    "action": "U"
-                },
-                {
-                    "step": 86,
-                    "forward_time": 7.6995,
-                    "action": "U"
-                },
-                {
-                    "step": 87,
-                    "forward_time": 8.2589,
-                    "action": "U"
-                },
-                {
-                    "step": 88,
-                    "forward_time": 7.7419,
-                    "action": "U"
-                },
-                {
-                    "step": 89,
-                    "forward_time": 8.131,
-                    "action": "U"
-                },
-                {
-                    "step": 90,
-                    "forward_time": 7.5647,
-                    "action": "U"
-                },
-                {
-                    "step": 91,
-                    "forward_time": 7.9137,
-                    "action": "U"
-                },
-                {
-                    "step": 92,
-                    "forward_time": 8.0488,
-                    "action": "U"
-                },
-                {
-                    "step": 93,
-                    "forward_time": 7.6546,
-                    "action": "U"
-                },
-                {
-                    "step": 94,
-                    "forward_time": 7.9259,
-                    "action": "U"
-                },
-                {
-                    "step": 95,
-                    "forward_time": 7.6435,
-                    "action": "U"
-                },
-                {
-                    "step": 96,
-                    "forward_time": 7.7719,
-                    "action": "U"
-                },
-                {
-                    "step": 97,
-                    "forward_time": 7.6313,
-                    "action": "U"
-                },
-                {
-                    "step": 98,
-                    "forward_time": 7.7053,
-                    "action": "U"
-                },
-                {
-                    "step": 99,
-                    "forward_time": 7.9758,
-                    "action": "U"
-                },
-                {
-                    "step": 100,
-                    "forward_time": 8.2624,
-                    "action": "U"
-                },
-                {
-                    "step": 101,
-                    "forward_time": 8.4394,
-                    "action": "U"
-                },
-                {
-                    "step": 102,
-                    "forward_time": 7.6099,
-                    "action": "U"
-                },
-                {
-                    "step": 103,
-                    "forward_time": 7.8619,
-                    "action": "U"
-                },
-                {
-                    "step": 104,
-                    "forward_time": 7.5611,
-                    "action": "U"
-                },
-                {
-                    "step": 105,
-                    "forward_time": 8.3329,
-                    "action": "R"
-                },
-                {
-                    "step": 106,
-                    "forward_time": 7.3254,
+                    "forward_time": 447.7046,
                     "action": "D"
                 },
                 {
-                    "step": 107,
-                    "forward_time": 7.0551,
-                    "action": "U"
+                    "step": 32,
+                    "forward_time": 207.5401,
+                    "action": "D"
                 },
                 {
-                    "step": 108,
-                    "forward_time": 7.3509,
-                    "action": "U"
+                    "step": 33,
+                    "forward_time": 346.2551,
+                    "action": "D"
                 },
                 {
-                    "step": 109,
-                    "forward_time": 7.254,
-                    "action": "U"
+                    "step": 34,
+                    "forward_time": 135.7535,
+                    "action": "D"
                 },
                 {
-                    "step": 110,
-                    "forward_time": 7.5049,
-                    "action": "U"
-                },
-                {
-                    "step": 111,
-                    "forward_time": 7.9034,
-                    "action": "U"
-                },
-                {
-                    "step": 112,
-                    "forward_time": 7.825,
-                    "action": "U"
-                },
-                {
-                    "step": 113,
-                    "forward_time": 7.8441,
-                    "action": "R"
-                },
-                {
-                    "step": 114,
-                    "forward_time": 7.9527,
-                    "action": "U"
-                },
-                {
-                    "step": 115,
-                    "forward_time": 7.997,
-                    "action": "U"
-                },
-                {
-                    "step": 116,
-                    "forward_time": 7.8757,
-                    "action": "U"
-                },
-                {
-                    "step": 117,
-                    "forward_time": 7.5615,
-                    "action": "U"
-                },
-                {
-                    "step": 118,
-                    "forward_time": 8.1609,
-                    "action": "U"
-                },
-                {
-                    "step": 119,
-                    "forward_time": 7.6429,
-                    "action": "U"
-                },
-                {
-                    "step": 120,
-                    "forward_time": 7.7492,
-                    "action": "U"
-                },
-                {
-                    "step": 121,
-                    "forward_time": 8.1086,
+                    "step": 35,
+                    "forward_time": 127.798,
                     "action": "L"
+                },
+                {
+                    "step": 36,
+                    "forward_time": 491.4459,
+                    "action": "D"
+                },
+                {
+                    "step": 37,
+                    "forward_time": 520.2362,
+                    "action": "R"
                 }
             ]
         },
         "testsokoban.txt_map_002": {
-            "status": "failed",
-            "steps": 121,
-            "inference_time_ms": 1536.41,
-            "total_system_time_ms": 3310.61,
+            "status": "success",
+            "steps": 26,
+            "inference_time_ms": 5827.13,
+            "total_system_time_ms": 11151.4,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 25.203,
+                    "forward_time": 140.3536,
                     "action": "D"
                 },
                 {
                     "step": 2,
-                    "forward_time": 24.4671,
-                    "action": "D"
+                    "forward_time": 131.8866,
+                    "action": "R"
                 },
                 {
                     "step": 3,
-                    "forward_time": 30.5197,
-                    "action": "D"
+                    "forward_time": 127.9662,
+                    "action": "R"
                 },
                 {
                     "step": 4,
-                    "forward_time": 28.2568,
-                    "action": "D"
+                    "forward_time": 128.6598,
+                    "action": "R"
                 },
                 {
                     "step": 5,
-                    "forward_time": 27.6326,
+                    "forward_time": 128.2996,
                     "action": "D"
                 },
                 {
                     "step": 6,
-                    "forward_time": 28.0391,
-                    "action": "D"
+                    "forward_time": 128.6706,
+                    "action": "L"
                 },
                 {
                     "step": 7,
-                    "forward_time": 29.5385,
+                    "forward_time": 131.0733,
                     "action": "D"
                 },
                 {
                     "step": 8,
-                    "forward_time": 28.5008,
-                    "action": "D"
+                    "forward_time": 128.4544,
+                    "action": "L"
                 },
                 {
                     "step": 9,
-                    "forward_time": 27.8559,
-                    "action": "D"
+                    "forward_time": 128.8558,
+                    "action": "L"
                 },
                 {
                     "step": 10,
-                    "forward_time": 42.2105,
-                    "action": "D"
+                    "forward_time": 165.6831,
+                    "action": "R"
                 },
                 {
                     "step": 11,
-                    "forward_time": 28.2269,
-                    "action": "D"
+                    "forward_time": 128.5056,
+                    "action": "R"
                 },
                 {
                     "step": 12,
-                    "forward_time": 28.4979,
-                    "action": "D"
+                    "forward_time": 130.0286,
+                    "action": "U"
                 },
                 {
                     "step": 13,
-                    "forward_time": 27.496,
-                    "action": "D"
+                    "forward_time": 127.9964,
+                    "action": "U"
                 },
                 {
                     "step": 14,
-                    "forward_time": 29.0754,
-                    "action": "D"
+                    "forward_time": 527.2731,
+                    "action": "L"
                 },
                 {
                     "step": 15,
-                    "forward_time": 28.8542,
-                    "action": "D"
+                    "forward_time": 525.1397,
+                    "action": "L"
                 },
                 {
                     "step": 16,
-                    "forward_time": 28.9825,
-                    "action": "D"
+                    "forward_time": 531.4985,
+                    "action": "L"
                 },
                 {
                     "step": 17,
-                    "forward_time": 28.102,
+                    "forward_time": 524.841,
                     "action": "D"
                 },
                 {
                     "step": 18,
-                    "forward_time": 28.1117,
+                    "forward_time": 137.6572,
                     "action": "D"
                 },
                 {
                     "step": 19,
-                    "forward_time": 28.6546,
-                    "action": "D"
-                },
-                {
-                    "step": 20,
-                    "forward_time": 29.0167,
-                    "action": "D"
-                },
-                {
-                    "step": 21,
-                    "forward_time": 8.5092,
-                    "action": "D"
-                },
-                {
-                    "step": 22,
-                    "forward_time": 8.6608,
+                    "forward_time": 516.4006,
                     "action": "R"
                 },
                 {
+                    "step": 20,
+                    "forward_time": 134.9508,
+                    "action": "R"
+                },
+                {
+                    "step": 21,
+                    "forward_time": 136.3759,
+                    "action": "R"
+                },
+                {
+                    "step": 22,
+                    "forward_time": 134.9454,
+                    "action": "D"
+                },
+                {
                     "step": 23,
-                    "forward_time": 8.1706,
+                    "forward_time": 135.4825,
                     "action": "R"
                 },
                 {
                     "step": 24,
-                    "forward_time": 8.4065,
-                    "action": "U"
+                    "forward_time": 148.3625,
+                    "action": "R"
                 },
                 {
                     "step": 25,
-                    "forward_time": 7.5232,
-                    "action": "D"
+                    "forward_time": 512.8319,
+                    "action": "U"
                 },
                 {
                     "step": 26,
-                    "forward_time": 7.1276,
-                    "action": "R"
-                },
-                {
-                    "step": 27,
-                    "forward_time": 7.9044,
-                    "action": "R"
-                },
-                {
-                    "step": 28,
-                    "forward_time": 8.183,
-                    "action": "R"
-                },
-                {
-                    "step": 29,
-                    "forward_time": 8.709,
-                    "action": "R"
-                },
-                {
-                    "step": 30,
-                    "forward_time": 7.6687,
-                    "action": "R"
-                },
-                {
-                    "step": 31,
-                    "forward_time": 7.792,
-                    "action": "R"
-                },
-                {
-                    "step": 32,
-                    "forward_time": 7.4816,
-                    "action": "R"
-                },
-                {
-                    "step": 33,
-                    "forward_time": 7.4802,
-                    "action": "R"
-                },
-                {
-                    "step": 34,
-                    "forward_time": 7.3231,
-                    "action": "R"
-                },
-                {
-                    "step": 35,
-                    "forward_time": 7.3096,
-                    "action": "R"
-                },
-                {
-                    "step": 36,
-                    "forward_time": 7.7135,
-                    "action": "R"
-                },
-                {
-                    "step": 37,
-                    "forward_time": 7.5254,
-                    "action": "R"
-                },
-                {
-                    "step": 38,
-                    "forward_time": 7.5872,
-                    "action": "R"
-                },
-                {
-                    "step": 39,
-                    "forward_time": 7.8483,
-                    "action": "R"
-                },
-                {
-                    "step": 40,
-                    "forward_time": 7.2959,
-                    "action": "R"
-                },
-                {
-                    "step": 41,
-                    "forward_time": 7.4269,
-                    "action": "R"
-                },
-                {
-                    "step": 42,
-                    "forward_time": 7.7759,
-                    "action": "R"
-                },
-                {
-                    "step": 43,
-                    "forward_time": 7.3467,
-                    "action": "R"
-                },
-                {
-                    "step": 44,
-                    "forward_time": 7.7483,
-                    "action": "R"
-                },
-                {
-                    "step": 45,
-                    "forward_time": 7.7393,
-                    "action": "R"
-                },
-                {
-                    "step": 46,
-                    "forward_time": 7.7042,
-                    "action": "R"
-                },
-                {
-                    "step": 47,
-                    "forward_time": 7.6818,
-                    "action": "R"
-                },
-                {
-                    "step": 48,
-                    "forward_time": 7.4182,
-                    "action": "R"
-                },
-                {
-                    "step": 49,
-                    "forward_time": 7.5287,
-                    "action": "R"
-                },
-                {
-                    "step": 50,
-                    "forward_time": 7.5214,
-                    "action": "R"
-                },
-                {
-                    "step": 51,
-                    "forward_time": 8.1824,
-                    "action": "R"
-                },
-                {
-                    "step": 52,
-                    "forward_time": 7.4058,
-                    "action": "R"
-                },
-                {
-                    "step": 53,
-                    "forward_time": 7.521,
-                    "action": "R"
-                },
-                {
-                    "step": 54,
-                    "forward_time": 7.5686,
-                    "action": "R"
-                },
-                {
-                    "step": 55,
-                    "forward_time": 7.2288,
-                    "action": "R"
-                },
-                {
-                    "step": 56,
-                    "forward_time": 7.3114,
-                    "action": "R"
-                },
-                {
-                    "step": 57,
-                    "forward_time": 7.1029,
-                    "action": "R"
-                },
-                {
-                    "step": 58,
-                    "forward_time": 7.5135,
-                    "action": "R"
-                },
-                {
-                    "step": 59,
-                    "forward_time": 7.4232,
-                    "action": "R"
-                },
-                {
-                    "step": 60,
-                    "forward_time": 7.5406,
-                    "action": "R"
-                },
-                {
-                    "step": 61,
-                    "forward_time": 8.0846,
-                    "action": "R"
-                },
-                {
-                    "step": 62,
-                    "forward_time": 7.6434,
-                    "action": "R"
-                },
-                {
-                    "step": 63,
-                    "forward_time": 7.4136,
-                    "action": "R"
-                },
-                {
-                    "step": 64,
-                    "forward_time": 8.439,
-                    "action": "R"
-                },
-                {
-                    "step": 65,
-                    "forward_time": 8.8417,
-                    "action": "R"
-                },
-                {
-                    "step": 66,
-                    "forward_time": 8.4839,
-                    "action": "R"
-                },
-                {
-                    "step": 67,
-                    "forward_time": 8.285,
-                    "action": "R"
-                },
-                {
-                    "step": 68,
-                    "forward_time": 8.1014,
-                    "action": "R"
-                },
-                {
-                    "step": 69,
-                    "forward_time": 8.0758,
-                    "action": "R"
-                },
-                {
-                    "step": 70,
-                    "forward_time": 8.849,
-                    "action": "R"
-                },
-                {
-                    "step": 71,
-                    "forward_time": 8.0424,
-                    "action": "R"
-                },
-                {
-                    "step": 72,
-                    "forward_time": 7.8195,
-                    "action": "R"
-                },
-                {
-                    "step": 73,
-                    "forward_time": 7.9029,
-                    "action": "R"
-                },
-                {
-                    "step": 74,
-                    "forward_time": 8.1875,
-                    "action": "R"
-                },
-                {
-                    "step": 75,
-                    "forward_time": 8.4978,
-                    "action": "R"
-                },
-                {
-                    "step": 76,
-                    "forward_time": 8.2107,
-                    "action": "R"
-                },
-                {
-                    "step": 77,
-                    "forward_time": 7.678,
-                    "action": "R"
-                },
-                {
-                    "step": 78,
-                    "forward_time": 7.7002,
-                    "action": "R"
-                },
-                {
-                    "step": 79,
-                    "forward_time": 8.1375,
-                    "action": "R"
-                },
-                {
-                    "step": 80,
-                    "forward_time": 8.3368,
-                    "action": "R"
-                },
-                {
-                    "step": 81,
-                    "forward_time": 8.5407,
-                    "action": "D"
-                },
-                {
-                    "step": 82,
-                    "forward_time": 7.8676,
-                    "action": "D"
-                },
-                {
-                    "step": 83,
-                    "forward_time": 8.0325,
-                    "action": "D"
-                },
-                {
-                    "step": 84,
-                    "forward_time": 8.1171,
-                    "action": "D"
-                },
-                {
-                    "step": 85,
-                    "forward_time": 7.9877,
-                    "action": "D"
-                },
-                {
-                    "step": 86,
-                    "forward_time": 8.4938,
-                    "action": "D"
-                },
-                {
-                    "step": 87,
-                    "forward_time": 8.458,
-                    "action": "D"
-                },
-                {
-                    "step": 88,
-                    "forward_time": 8.0511,
-                    "action": "D"
-                },
-                {
-                    "step": 89,
-                    "forward_time": 8.0527,
-                    "action": "D"
-                },
-                {
-                    "step": 90,
-                    "forward_time": 7.7535,
-                    "action": "D"
-                },
-                {
-                    "step": 91,
-                    "forward_time": 7.8624,
-                    "action": "D"
-                },
-                {
-                    "step": 92,
-                    "forward_time": 7.7434,
-                    "action": "D"
-                },
-                {
-                    "step": 93,
-                    "forward_time": 7.4388,
-                    "action": "D"
-                },
-                {
-                    "step": 94,
-                    "forward_time": 7.8977,
-                    "action": "D"
-                },
-                {
-                    "step": 95,
-                    "forward_time": 7.6827,
-                    "action": "D"
-                },
-                {
-                    "step": 96,
-                    "forward_time": 7.7421,
-                    "action": "D"
-                },
-                {
-                    "step": 97,
-                    "forward_time": 7.849,
-                    "action": "D"
-                },
-                {
-                    "step": 98,
-                    "forward_time": 17.2,
-                    "action": "D"
-                },
-                {
-                    "step": 99,
-                    "forward_time": 8.0292,
-                    "action": "D"
-                },
-                {
-                    "step": 100,
-                    "forward_time": 7.4529,
-                    "action": "D"
-                },
-                {
-                    "step": 101,
-                    "forward_time": 7.4821,
+                    "forward_time": 134.9339,
                     "action": "L"
-                },
-                {
-                    "step": 102,
-                    "forward_time": 8.1169,
-                    "action": "L"
-                },
-                {
-                    "step": 103,
-                    "forward_time": 7.6749,
-                    "action": "L"
-                },
-                {
-                    "step": 104,
-                    "forward_time": 8.0998,
-                    "action": "L"
-                },
-                {
-                    "step": 105,
-                    "forward_time": 13.733,
-                    "action": "L"
-                },
-                {
-                    "step": 106,
-                    "forward_time": 7.8018,
-                    "action": "L"
-                },
-                {
-                    "step": 107,
-                    "forward_time": 7.4556,
-                    "action": "L"
-                },
-                {
-                    "step": 108,
-                    "forward_time": 7.8896,
-                    "action": "L"
-                },
-                {
-                    "step": 109,
-                    "forward_time": 7.7402,
-                    "action": "L"
-                },
-                {
-                    "step": 110,
-                    "forward_time": 7.5126,
-                    "action": "L"
-                },
-                {
-                    "step": 111,
-                    "forward_time": 9.6348,
-                    "action": "L"
-                },
-                {
-                    "step": 112,
-                    "forward_time": 30.1496,
-                    "action": "L"
-                },
-                {
-                    "step": 113,
-                    "forward_time": 29.7722,
-                    "action": "L"
-                },
-                {
-                    "step": 114,
-                    "forward_time": 28.8263,
-                    "action": "L"
-                },
-                {
-                    "step": 115,
-                    "forward_time": 28.977,
-                    "action": "L"
-                },
-                {
-                    "step": 116,
-                    "forward_time": 28.787,
-                    "action": "L"
-                },
-                {
-                    "step": 117,
-                    "forward_time": 28.4954,
-                    "action": "L"
-                },
-                {
-                    "step": 118,
-                    "forward_time": 8.5153,
-                    "action": "L"
-                },
-                {
-                    "step": 119,
-                    "forward_time": 7.8273,
-                    "action": "L"
-                },
-                {
-                    "step": 120,
-                    "forward_time": 7.901,
-                    "action": "L"
-                },
-                {
-                    "step": 121,
-                    "forward_time": 28.882,
-                    "action": "D"
                 }
             ]
         },
         "testsokoban.txt_map_003": {
-            "status": "failed",
-            "steps": 121,
-            "inference_time_ms": 1392.41,
-            "total_system_time_ms": 3109.17,
+            "status": "success",
+            "steps": 26,
+            "inference_time_ms": 4844.32,
+            "total_system_time_ms": 9278.1,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 9.3508,
-                    "action": "D"
+                    "forward_time": 486.1047,
+                    "action": "U"
                 },
                 {
                     "step": 2,
-                    "forward_time": 7.3987,
-                    "action": "D"
+                    "forward_time": 163.1493,
+                    "action": "L"
                 },
                 {
                     "step": 3,
-                    "forward_time": 7.5263,
-                    "action": "D"
+                    "forward_time": 361.6345,
+                    "action": "U"
                 },
                 {
                     "step": 4,
-                    "forward_time": 7.9669,
-                    "action": "D"
+                    "forward_time": 137.8294,
+                    "action": "R"
                 },
                 {
                     "step": 5,
-                    "forward_time": 7.6404,
-                    "action": "D"
+                    "forward_time": 133.3287,
+                    "action": "R"
                 },
                 {
                     "step": 6,
-                    "forward_time": 7.9105,
+                    "forward_time": 130.0605,
                     "action": "D"
                 },
                 {
                     "step": 7,
-                    "forward_time": 7.6785,
+                    "forward_time": 133.5816,
                     "action": "R"
                 },
                 {
                     "step": 8,
-                    "forward_time": 7.6837,
-                    "action": "D"
+                    "forward_time": 139.4796,
+                    "action": "U"
                 },
                 {
                     "step": 9,
-                    "forward_time": 7.4126,
-                    "action": "D"
-                },
-                {
-                    "step": 10,
-                    "forward_time": 7.6616,
-                    "action": "L"
-                },
-                {
-                    "step": 11,
-                    "forward_time": 7.8471,
-                    "action": "U"
-                },
-                {
-                    "step": 12,
-                    "forward_time": 7.986,
+                    "forward_time": 133.2815,
                     "action": "R"
                 },
                 {
+                    "step": 10,
+                    "forward_time": 133.5778,
+                    "action": "D"
+                },
+                {
+                    "step": 11,
+                    "forward_time": 141.6666,
+                    "action": "D"
+                },
+                {
+                    "step": 12,
+                    "forward_time": 133.7199,
+                    "action": "L"
+                },
+                {
                     "step": 13,
-                    "forward_time": 7.6514,
-                    "action": "U"
+                    "forward_time": 229.919,
+                    "action": "D"
                 },
                 {
                     "step": 14,
-                    "forward_time": 7.7082,
-                    "action": "U"
+                    "forward_time": 166.0408,
+                    "action": "D"
                 },
                 {
                     "step": 15,
-                    "forward_time": 7.8617,
-                    "action": "U"
+                    "forward_time": 137.8123,
+                    "action": "D"
                 },
                 {
                     "step": 16,
-                    "forward_time": 7.3754,
-                    "action": "U"
+                    "forward_time": 133.7549,
+                    "action": "L"
                 },
                 {
                     "step": 17,
-                    "forward_time": 8.0866,
+                    "forward_time": 137.4409,
                     "action": "U"
                 },
                 {
                     "step": 18,
-                    "forward_time": 7.8089,
+                    "forward_time": 133.7062,
                     "action": "U"
                 },
                 {
                     "step": 19,
-                    "forward_time": 7.5547,
+                    "forward_time": 169.5212,
                     "action": "U"
                 },
                 {
                     "step": 20,
-                    "forward_time": 7.7004,
-                    "action": "U"
+                    "forward_time": 136.3505,
+                    "action": "D"
                 },
                 {
                     "step": 21,
-                    "forward_time": 8.5109,
-                    "action": "L"
+                    "forward_time": 133.4255,
+                    "action": "D"
                 },
                 {
                     "step": 22,
-                    "forward_time": 7.5239,
+                    "forward_time": 316.9928,
                     "action": "L"
                 },
                 {
                     "step": 23,
-                    "forward_time": 7.9361,
-                    "action": "L"
+                    "forward_time": 130.2556,
+                    "action": "D"
                 },
                 {
                     "step": 24,
-                    "forward_time": 7.7831,
+                    "forward_time": 129.5903,
                     "action": "L"
                 },
                 {
                     "step": 25,
-                    "forward_time": 7.9202,
-                    "action": "L"
+                    "forward_time": 531.0811,
+                    "action": "U"
                 },
                 {
                     "step": 26,
-                    "forward_time": 7.5022,
-                    "action": "L"
-                },
-                {
-                    "step": 27,
-                    "forward_time": 7.4662,
-                    "action": "L"
-                },
-                {
-                    "step": 28,
-                    "forward_time": 7.7191,
-                    "action": "L"
-                },
-                {
-                    "step": 29,
-                    "forward_time": 7.9422,
-                    "action": "L"
-                },
-                {
-                    "step": 30,
-                    "forward_time": 7.7381,
-                    "action": "L"
-                },
-                {
-                    "step": 31,
-                    "forward_time": 7.5851,
-                    "action": "L"
-                },
-                {
-                    "step": 32,
-                    "forward_time": 7.9,
-                    "action": "L"
-                },
-                {
-                    "step": 33,
-                    "forward_time": 7.6994,
-                    "action": "L"
-                },
-                {
-                    "step": 34,
-                    "forward_time": 7.5462,
-                    "action": "L"
-                },
-                {
-                    "step": 35,
-                    "forward_time": 7.4266,
-                    "action": "L"
-                },
-                {
-                    "step": 36,
-                    "forward_time": 7.7307,
-                    "action": "L"
-                },
-                {
-                    "step": 37,
-                    "forward_time": 7.8815,
-                    "action": "L"
-                },
-                {
-                    "step": 38,
-                    "forward_time": 7.765,
-                    "action": "L"
-                },
-                {
-                    "step": 39,
-                    "forward_time": 7.3513,
-                    "action": "L"
-                },
-                {
-                    "step": 40,
-                    "forward_time": 7.1197,
-                    "action": "L"
-                },
-                {
-                    "step": 41,
-                    "forward_time": 30.063,
+                    "forward_time": 131.0196,
                     "action": "U"
-                },
-                {
-                    "step": 42,
-                    "forward_time": 30.1103,
-                    "action": "U"
-                },
-                {
-                    "step": 43,
-                    "forward_time": 30.5385,
-                    "action": "U"
-                },
-                {
-                    "step": 44,
-                    "forward_time": 29.8098,
-                    "action": "U"
-                },
-                {
-                    "step": 45,
-                    "forward_time": 29.7643,
-                    "action": "U"
-                },
-                {
-                    "step": 46,
-                    "forward_time": 31.522,
-                    "action": "U"
-                },
-                {
-                    "step": 47,
-                    "forward_time": 30.2819,
-                    "action": "U"
-                },
-                {
-                    "step": 48,
-                    "forward_time": 31.3354,
-                    "action": "U"
-                },
-                {
-                    "step": 49,
-                    "forward_time": 29.4905,
-                    "action": "U"
-                },
-                {
-                    "step": 50,
-                    "forward_time": 30.4732,
-                    "action": "U"
-                },
-                {
-                    "step": 51,
-                    "forward_time": 29.8787,
-                    "action": "U"
-                },
-                {
-                    "step": 52,
-                    "forward_time": 30.628,
-                    "action": "U"
-                },
-                {
-                    "step": 53,
-                    "forward_time": 31.72,
-                    "action": "U"
-                },
-                {
-                    "step": 54,
-                    "forward_time": 29.1308,
-                    "action": "U"
-                },
-                {
-                    "step": 55,
-                    "forward_time": 30.253,
-                    "action": "U"
-                },
-                {
-                    "step": 56,
-                    "forward_time": 29.2373,
-                    "action": "U"
-                },
-                {
-                    "step": 57,
-                    "forward_time": 30.2644,
-                    "action": "U"
-                },
-                {
-                    "step": 58,
-                    "forward_time": 29.6683,
-                    "action": "U"
-                },
-                {
-                    "step": 59,
-                    "forward_time": 32.5025,
-                    "action": "U"
-                },
-                {
-                    "step": 60,
-                    "forward_time": 31.3857,
-                    "action": "U"
-                },
-                {
-                    "step": 61,
-                    "forward_time": 8.9962,
-                    "action": "R"
-                },
-                {
-                    "step": 62,
-                    "forward_time": 8.6714,
-                    "action": "R"
-                },
-                {
-                    "step": 63,
-                    "forward_time": 8.4461,
-                    "action": "R"
-                },
-                {
-                    "step": 64,
-                    "forward_time": 7.4687,
-                    "action": "R"
-                },
-                {
-                    "step": 65,
-                    "forward_time": 8.2652,
-                    "action": "D"
-                },
-                {
-                    "step": 66,
-                    "forward_time": 7.9021,
-                    "action": "R"
-                },
-                {
-                    "step": 67,
-                    "forward_time": 7.8876,
-                    "action": "R"
-                },
-                {
-                    "step": 68,
-                    "forward_time": 7.7839,
-                    "action": "R"
-                },
-                {
-                    "step": 69,
-                    "forward_time": 7.5716,
-                    "action": "R"
-                },
-                {
-                    "step": 70,
-                    "forward_time": 7.4982,
-                    "action": "R"
-                },
-                {
-                    "step": 71,
-                    "forward_time": 7.2031,
-                    "action": "R"
-                },
-                {
-                    "step": 72,
-                    "forward_time": 7.1742,
-                    "action": "R"
-                },
-                {
-                    "step": 73,
-                    "forward_time": 7.2133,
-                    "action": "R"
-                },
-                {
-                    "step": 74,
-                    "forward_time": 7.5638,
-                    "action": "R"
-                },
-                {
-                    "step": 75,
-                    "forward_time": 7.6663,
-                    "action": "U"
-                },
-                {
-                    "step": 76,
-                    "forward_time": 7.5878,
-                    "action": "R"
-                },
-                {
-                    "step": 77,
-                    "forward_time": 7.7361,
-                    "action": "R"
-                },
-                {
-                    "step": 78,
-                    "forward_time": 7.8398,
-                    "action": "R"
-                },
-                {
-                    "step": 79,
-                    "forward_time": 7.5708,
-                    "action": "R"
-                },
-                {
-                    "step": 80,
-                    "forward_time": 7.2746,
-                    "action": "R"
-                },
-                {
-                    "step": 81,
-                    "forward_time": 7.2735,
-                    "action": "R"
-                },
-                {
-                    "step": 82,
-                    "forward_time": 7.7409,
-                    "action": "R"
-                },
-                {
-                    "step": 83,
-                    "forward_time": 7.4374,
-                    "action": "R"
-                },
-                {
-                    "step": 84,
-                    "forward_time": 7.2546,
-                    "action": "R"
-                },
-                {
-                    "step": 85,
-                    "forward_time": 8.1031,
-                    "action": "R"
-                },
-                {
-                    "step": 86,
-                    "forward_time": 7.8351,
-                    "action": "R"
-                },
-                {
-                    "step": 87,
-                    "forward_time": 7.5588,
-                    "action": "R"
-                },
-                {
-                    "step": 88,
-                    "forward_time": 7.6641,
-                    "action": "R"
-                },
-                {
-                    "step": 89,
-                    "forward_time": 7.2026,
-                    "action": "U"
-                },
-                {
-                    "step": 90,
-                    "forward_time": 7.296,
-                    "action": "R"
-                },
-                {
-                    "step": 91,
-                    "forward_time": 7.6258,
-                    "action": "R"
-                },
-                {
-                    "step": 92,
-                    "forward_time": 7.5584,
-                    "action": "R"
-                },
-                {
-                    "step": 93,
-                    "forward_time": 7.6789,
-                    "action": "U"
-                },
-                {
-                    "step": 94,
-                    "forward_time": 7.598,
-                    "action": "R"
-                },
-                {
-                    "step": 95,
-                    "forward_time": 7.9204,
-                    "action": "R"
-                },
-                {
-                    "step": 96,
-                    "forward_time": 7.8611,
-                    "action": "R"
-                },
-                {
-                    "step": 97,
-                    "forward_time": 7.9586,
-                    "action": "U"
-                },
-                {
-                    "step": 98,
-                    "forward_time": 8.2358,
-                    "action": "R"
-                },
-                {
-                    "step": 99,
-                    "forward_time": 8.8351,
-                    "action": "R"
-                },
-                {
-                    "step": 100,
-                    "forward_time": 7.9696,
-                    "action": "R"
-                },
-                {
-                    "step": 101,
-                    "forward_time": 8.88,
-                    "action": "D"
-                },
-                {
-                    "step": 102,
-                    "forward_time": 8.2397,
-                    "action": "R"
-                },
-                {
-                    "step": 103,
-                    "forward_time": 8.5107,
-                    "action": "D"
-                },
-                {
-                    "step": 104,
-                    "forward_time": 7.7824,
-                    "action": "D"
-                },
-                {
-                    "step": 105,
-                    "forward_time": 8.0133,
-                    "action": "NOOP"
-                },
-                {
-                    "step": 106,
-                    "forward_time": 7.8632,
-                    "action": "D"
-                },
-                {
-                    "step": 107,
-                    "forward_time": 8.0722,
-                    "action": "L"
-                },
-                {
-                    "step": 108,
-                    "forward_time": 7.1138,
-                    "action": "D"
-                },
-                {
-                    "step": 109,
-                    "forward_time": 7.6149,
-                    "action": "D"
-                },
-                {
-                    "step": 110,
-                    "forward_time": 7.6927,
-                    "action": "D"
-                },
-                {
-                    "step": 111,
-                    "forward_time": 7.5679,
-                    "action": "R"
-                },
-                {
-                    "step": 112,
-                    "forward_time": 7.605,
-                    "action": "L"
-                },
-                {
-                    "step": 113,
-                    "forward_time": 7.9684,
-                    "action": "D"
-                },
-                {
-                    "step": 114,
-                    "forward_time": 7.8663,
-                    "action": "R"
-                },
-                {
-                    "step": 115,
-                    "forward_time": 8.0372,
-                    "action": "D"
-                },
-                {
-                    "step": 116,
-                    "forward_time": 7.4558,
-                    "action": "D"
-                },
-                {
-                    "step": 117,
-                    "forward_time": 7.5127,
-                    "action": "D"
-                },
-                {
-                    "step": 118,
-                    "forward_time": 7.8407,
-                    "action": "D"
-                },
-                {
-                    "step": 119,
-                    "forward_time": 7.7043,
-                    "action": "U"
-                },
-                {
-                    "step": 120,
-                    "forward_time": 7.8162,
-                    "action": "D"
-                },
-                {
-                    "step": 121,
-                    "forward_time": 7.4038,
-                    "action": "R"
                 }
             ]
         }

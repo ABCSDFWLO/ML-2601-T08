@@ -4,6 +4,8 @@ import numpy as np
 import argparse
 import ray
 import os
+
+os.environ["RAY_DASHBOARD_HOST"] = "0.0.0.0"
 from thinker.self_play import SelfPlayWorker, PO_NET, PO_MODEL, PO_NSTEP
 from thinker.buffer import GeneralBuffer
 import thinker.util as util
@@ -94,9 +96,10 @@ if __name__ == "__main__":
     ray.init(
         num_cpus=int(flags.ray_cpu) if flags.ray_cpu > 0 else None,
         num_gpus=int(flags.ray_gpu) if flags.ray_gpu > 0 else None,
-        object_store_memory=int(flags.ray_mem * 1024**3)
-        if flags.ray_mem > 0
-        else None,
+        object_store_memory=int(flags.ray_mem * 1024**3) if flags.ray_mem > 0 else None,
+        include_dashboard=True,
+        dashboard_host="0.0.0.0",
+        dashboard_port=8265
     )
 
     st_time = time.time()
@@ -213,3 +216,13 @@ if __name__ == "__main__":
         )
 
     logger.info("Time required: %fs" % (time.time() - st_time))
+
+    # # --- 이곳부터 파일 맨 끝에 다음 코드를 추가합니다 ---
+    # logger.info("평가가 완료되었습니다. 대시보드 확인을 위해 스크립트 대기 중입니다.")
+    # logger.info("대시보드 접속: http://127.0.0.1:8265")
+    # logger.info("종료하려면 터미널에서 Ctrl+C를 입력하세요.")
+    # try:
+    #     while True:
+    #         time.sleep(60)
+    # except KeyboardInterrupt:
+    #     logger.info("스크립트를 강제 종료합니다.")
