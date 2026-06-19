@@ -289,6 +289,7 @@ def train_step_plhw(plhw, optimizer, ss_enc, ts_enc, mid_enc, layer_t, batch_siz
 
 @torch.no_grad()
 def quick_probe(config, model_keeper, device, probe_levels_path, n_games: int, n_steps: int):
+    """Single-file probe (legacy, for monitoring)."""
     env_cfg = dict(config["env"])
     env_cfg["levels"] = probe_levels_path
     env_cfg["n_max_episode_steps"] = n_steps
@@ -327,6 +328,71 @@ def quick_probe(config, model_keeper, device, probe_levels_path, n_games: int, n
     return float(results[0]["solved_mean"]) if results else 0.0
 
 
+@torch.no_grad()
+def multi_file_probe(config, model_keeper, device, levels_glob_pattern, n_games_per_file: int, n_steps: int, max_files: int = 5):
+    """Multi-file probe with ensemble averaging to avoid overfitting."""
+    import glob as glob_lib
+    
+    levels_root = config["train"].get("levels", "unfiltered/train")
+    levels_path = os.path.join(os.path.dirname(levels_root), levels_glob_pattern.replace("*.txt", ""))
+    
+    # Find all matching level files
+    pattern = levels_glob_pattern.replace("*", os.path.join(levels_path.replace("*.txt", ""), "*"))
+    files = sorted(glob_lib.glob(os.path.join(config["env"].get("levels_root", "/workspace/boxoban-levels"), levels_glob_pattern)))[:max_files]
+    
+    if not files:
+        print(f"  [MultiFileProbe] No files found for pattern: {levels_glob_pattern}", flush=True)
+        return 0.0
+    
+    sampler = hw_experience_replay.MemoryEnvsSampler(model_keeper=model_keeper)
+    policies = [
+        evaluate.get_policy(pn, model_keeper, sampler)
+        for pn in evaluate.get_policies(model_keeper, "last")
+    ]
+    
+    solve_rates = []
+    
+    for file_idx, level_file in enumerate(files):
+        env_cfg = dict(config["env"])
+        env_cfg["levels"] = level_file
+        env_cfg["n_max_episode_steps"] = n_steps
+        
+        envs_manager = environments.create_envs_manager(env_cfg)
+        
+        probe_cfg = {
+            "env": env_cfg,
+            "evaluate": {
+                "targets": "all",
+                "replan_every_actions": 0,
+                "replan_mismatch_threshold": 0.2,
+                "replan_stall_steps": 10,
+                "min_commit_steps": 4,
+                "progress_every_targets": 0,
+                "progress_every_games": 0,
+            },
+        }
+        
+        results = evaluate.validate_puzzle_solving__impl(
+            config=probe_cfg,
+            method="closed_loop_replan",
+            device=device,
+            envs_manager=envs_manager,
+            model_keeper=model_keeper,
+            n_games_to_solve=n_games_per_file,
+            policies=policies,
+            towards_or_away_array=[True],
+            tensorboard=None,
+        )
+        
+        sr = float(results[0]["solved_mean"]) if results else 0.0
+        solve_rates.append(sr)
+        print(f"    File {file_idx + 1}/{len(files)}: {os.path.basename(level_file)} solve_rate={sr:.3f}", flush=True)
+    
+    avg_sr = float(np.mean(solve_rates))
+    print(f"  [MultiFileProbe] avg_solve_rate={avg_sr:.3f} ({len(files)} files)", flush=True)
+    return avg_sr
+
+
 def _pick_level_file(levels_path: str, epoch_i: int):
     if os.path.isfile(levels_path):
         return levels_path
@@ -334,6 +400,58 @@ def _pick_level_file(levels_path: str, epoch_i: int):
     if not files:
         raise RuntimeError(f"No level files found under: {levels_path}")
     return files[(epoch_i - 1) % len(files)]
+
+
+def _pick_data_source_file(config, epoch_i: int, curriculum_transition_epoch: int):
+    """
+    Curriculum data selection: rotate through data sources with weighted sampling.
+    Early epochs: emphasize unfiltered (easy/stable)
+    Later epochs: include medium/hard (challenging)
+    """
+    tc = config["train"]
+    use_curriculum = tc.get("use_curriculum_data", False)
+    
+    if not use_curriculum:
+        # Fallback to single source
+        return _pick_level_file(tc["levels"], epoch_i)
+    
+    data_sources = tc.get("data_sources", [])
+    if not data_sources:
+        return _pick_level_file(tc["levels"], epoch_i)
+    
+    # Weight selection by curriculum progress
+    weights = []
+    for src in data_sources:
+        base_weight = float(src.get("weight", 1.0 / len(data_sources)))
+        if epoch_i <= curriculum_transition_epoch:
+            # Early phase: boost unfiltered, reduce hard
+            if src["name"] == "unfiltered":
+                weight = base_weight * 1.2
+            elif src["name"] == "hard":
+                weight = base_weight * 0.5
+            else:
+                weight = base_weight * 0.8
+        else:
+            # Late phase: balanced
+            weight = base_weight
+        weights.append(max(0.01, weight))
+    
+    # Normalize weights
+    weights = [w / sum(weights) for w in weights]
+    
+    # Sample a data source
+    selected_idx = np.random.choice(len(data_sources), p=weights)
+    selected_source = data_sources[selected_idx]
+    
+    # Pick a file from the selected source
+    glob_pattern = selected_source["glob"]
+    files = sorted(glob.glob(glob_pattern))
+    if not files:
+        # Fallback
+        return _pick_level_file(tc["levels"], epoch_i)
+    
+    file_idx = (epoch_i - 1 + selected_idx) % len(files)
+    return files[file_idx]
 
 
 def train(config, device):
@@ -377,21 +495,44 @@ def train(config, device):
     anchor_plta = _anchor_state(plta)
     anchor_plhw = _anchor_state(plhw)
 
+    # CURRICULUM LEARNING SETTINGS
+    use_curriculum_data = tc.get("use_curriculum_data", False)
+    curriculum_transition_epoch = int(tc.get("curriculum_transition_epoch", 8))
+    collector_policy_initial = tc.get("collector_policy_initial", "PL0")
+    collector_policy_final = tc.get("collector_policy_final", "PL1")
+    collector_policy_name = collector_policy_initial
+
     sampler = hw_experience_replay.MemoryEnvsSampler(model_keeper=model_keeper)
-    collector_policy_name = tc.get("collector_policy", "PL0")
     policy = evaluate.get_policy(collector_policy_name, model_keeper, sampler)
 
     best_probe = -1.0
     no_improve = 0
+    baseline_solve_rate = float(tc.get("baseline_unfiltered_valid_solve_rate", 0.58))  # v4 baseline
 
     print(f"Training levels root/file: {levels_path}")
     print(f"Probe levels: {probe_levels}")
-    print(f"Collector policy: {collector_policy_name}")
+    print(f"Collector policy (initial): {collector_policy_initial}")
+    if use_curriculum_data:
+        print(f"Curriculum data enabled (transition at epoch {curriculum_transition_epoch})")
+        print(f"Collector policy (final): {collector_policy_final}")
+    print(f"Baseline (unfiltered_valid_5files): {baseline_solve_rate:.3f}")
+    print(f"Gate: Finetune accepted only if unfiltered_valid_5files > {baseline_solve_rate:.3f}")
 
     for epoch in range(1, epochs + 1):
         t0 = time.time()
 
-        level_file = _pick_level_file(levels_path, epoch)
+        # CURRICULUM: Switch collector policy at transition epoch
+        if epoch == curriculum_transition_epoch + 1 and use_curriculum_data:
+            collector_policy_name = collector_policy_final
+            policy = evaluate.get_policy(collector_policy_name, model_keeper, sampler)
+            print(f"[Curriculum] Switching to {collector_policy_name} policy at epoch {epoch}", flush=True)
+
+        # CURRICULUM: Select data source with weighted sampling
+        if use_curriculum_data:
+            level_file = _pick_data_source_file(config, epoch, curriculum_transition_epoch)
+        else:
+            level_file = _pick_level_file(levels_path, epoch)
+        
         env_cfg = dict(config["env"])
         env_cfg["levels"] = level_file
         env_cfg["n_max_episode_steps"] = n_max_episode_steps
@@ -463,13 +604,29 @@ def train(config, device):
             model_keeper.save_checkpoint(ckpt_dir, f"[Epoch {epoch}]")
 
         if probe_every > 0 and epoch % probe_every == 0:
-            probe = quick_probe(config, model_keeper, device, probe_levels, probe_games, probe_steps)
-            print(f"  >>> Probe solve_rate={probe:.3f} (n={probe_games})", flush=True)
+            # Legacy single-file probe for monitoring
+            probe_legacy = quick_probe(config, model_keeper, device, probe_levels, probe_games, probe_steps)
+            print(f"  >>> Probe solve_rate (single file)={probe_legacy:.3f} (n={probe_games})", flush=True)
 
-            if probe > best_probe + min_probe_improve:
-                best_probe = probe
+            # Multi-file probe for decision gate (5-file ensemble)
+            probe_multi = multi_file_probe(
+                config, model_keeper, device,
+                levels_glob_pattern="unfiltered/valid/*.txt",
+                n_games_per_file=10,
+                n_steps=probe_steps,
+                max_files=5
+            )
+            
+            gate_pass = probe_multi > baseline_solve_rate
+            gate_status = "✅ PASS" if gate_pass else "❌ FAIL"
+            print(f"  >>> Gate check: {gate_status} (probe={probe_multi:.3f} vs baseline={baseline_solve_rate:.3f})", flush=True)
+
+            if probe_legacy > best_probe + min_probe_improve:
+                best_probe = probe_legacy
                 no_improve = 0
-                model_keeper.save_checkpoint(ckpt_dir, f"[Best {probe:.3f}]")
+                model_keeper.save_checkpoint(ckpt_dir, f"[Best {probe_legacy:.3f}]")
+                if gate_pass:
+                    model_keeper.save_checkpoint(ckpt_dir, f"[GatePassed {probe_multi:.3f}]")
             else:
                 no_improve += 1
                 print(f"  >>> No probe improvement ({no_improve}/{early_patience})", flush=True)
@@ -479,6 +636,7 @@ def train(config, device):
 
     model_keeper.save_checkpoint(ckpt_dir, "[Final]")
     print(f"Training complete. Best probe solve_rate={best_probe:.3f}")
+    print(f"Gate-passed checkpoint: Check logs for [GatePassed] marker")
 
 
 def main():
