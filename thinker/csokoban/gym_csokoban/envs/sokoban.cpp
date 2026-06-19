@@ -253,11 +253,11 @@ int Sokoban::read_level(const int room_id)
 		};
 		in.close();
 	}
-    if (box_left != 4) {
-        std::ostringstream error_msg;
-        error_msg << "box_left must be equal to 4 (room_id: " << room_id << ")";
-        throw std::runtime_error(error_msg.str());
-    }
+    // if (box_left != 4) {
+    //     std::ostringstream error_msg;
+    //     error_msg << "box_left must be equal to 4 (room_id: " << room_id << ")";
+    //     throw std::runtime_error(error_msg.str());
+    // }
 	return 0;
 }
 
