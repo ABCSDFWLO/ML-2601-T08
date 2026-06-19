@@ -37,20 +37,15 @@ def parse_boxoban_txt(file_path):
 
 def duplicate_and_force_map(map_data):
     grid = [row[:10].ljust(10, ' ') for row in map_data]
-    
     test_dir = "/workspace/csokoban/gym_csokoban/envs/boxoban-levels/unfiltered/test"
     os.makedirs(test_dir, exist_ok=True)
     
-    for f in os.listdir(test_dir):
-        if f.endswith(".txt"):
-            os.remove(os.path.join(test_dir, f))
-            
+    # 기존 1000번 반복 루프를 삭제하고 단 1번만 작성
     with open(os.path.join(test_dir, "000.txt"), "w", encoding='utf-8') as f:
-        for i in range(1000):
-            f.write(f"; {i}\n")
-            for line in grid:
-                f.write(line + "\n")
-            f.write("\n")
+        f.write("; 0\n")
+        for line in grid:
+            f.write(line + "\n")
+        f.write("\n")
 
 def run_inference(flags, maps):
     device = torch.device("cuda" if torch.cuda.is_available() and not getattr(flags, 'disable_cuda', False) else "cpu")
@@ -100,11 +95,11 @@ def run_inference(flags, maps):
         while not done:
             aug_step_count += 1
             
-            # 1. 정책 네트워크 추론 시간 측정 (기존 inference_time_ms)
-            inf_start_time = time.perf_counter()
+            # 1. 정책 네트워크 연산 시간 측정
+            actor_start_time = time.perf_counter()
             with torch.no_grad():
                 actor_out, core_state = actor_net(obs, core_state, greedy=getattr(flags, 'greedy', False))
-            accumulated_inference_time += (time.perf_counter() - inf_start_time) * 1000
+            actor_time_ms = (time.perf_counter() - actor_start_time) * 1000
             
             env_action = torch.zeros(1, 1, 3, dtype=torch.long, device=device)
             env_action[0, 0, 0] = actor_out.action.item()
@@ -112,15 +107,19 @@ def run_inference(flags, maps):
                 env_action[0, 0, 1] = actor_out.im_action.item()
                 env_action[0, 0, 2] = actor_out.reset_action.item()
             
-            # 2. 월드 모델 예측 및 환경 시뮬레이션 시간 측정 (신규 planning_time_ms)
+            # 2. 월드 모델 예측 및 환경 시뮬레이션 시간 측정
             env_start_time = time.perf_counter()
             obs = env.step(env_action, model_net=model_net)
-            accumulated_planning_time += (time.perf_counter() - env_start_time) * 1000
+            env_time_ms = (time.perf_counter() - env_start_time) * 1000
+            
+            # 요구사항 반영: inference_time에 연산+시뮬레이션 시간 합산, planning_time에 시뮬레이션 시간만 누적
+            accumulated_inference_time += (actor_time_ms + env_time_ms)
+            accumulated_planning_time += env_time_ms
             
             if obs.cur_t.item() == 0:
                 real_step_count += 1
                 action_str = get_action_string(actor_out.action.item())
-                
+
                 #print(f"[DEBUG] Map {map_id} | Real Step {real_step_count} | Action: {action_str} | Inference: {accumulated_inference_time:.2f}ms | Planning: {accumulated_planning_time:.2f}ms")
                 
                 solution.append({

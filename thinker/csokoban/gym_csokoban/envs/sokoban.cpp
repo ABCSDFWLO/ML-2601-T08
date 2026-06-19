@@ -224,15 +224,17 @@ int Sokoban::read_level(const int room_id)
 	done = false;
 
 	char file_name[10];
-	snprintf(file_name, 10, "%03d.txt", room_id / 1000);
+	// snprintf(file_name, 10, "%03d.txt", room_id / 1000);
+	snprintf(file_name, 10, "000.txt"); // 항상 000.txt를 읽도록 강제
 	string full_path = level_dir + "//" + file_name;
 	//std::cout << "reading from " << full_path << " level " << room_id << endl;
 	ifstream in(full_path.c_str(), ios::in);
 	if (in.is_open())
 	{
-		string line;
-		int n = 0, m = (room_id % 1000) * 12 + 1;
-		while (getline(in, line) && n < m + room_y)
+			string line;
+			// int n = 0, m = (room_id % 1000) * 12 + 1;
+			int n = 0, m = 1; // 랜덤 ID를 무시하고 항상 첫 번째 맵(1줄 스킵 후 10줄)을 읽도록 강제
+			while (getline(in, line) && n < m + room_y)
 		{
 			if (n++ >= m) {
 				istringstream row(line);
