@@ -9,7 +9,9 @@ INTERNAL_WORKSPACE = "/workspace"
 INTERNAL_INBOX = f"{INTERNAL_WORKSPACE}/inbox"
 INTERNAL_TASK_FILE = f"{INTERNAL_WORKSPACE}/task.txt"
 INTERNAL_OUTPUT_JSON = f"{INTERNAL_WORKSPACE}/DRC33_results.json"
-LOCAL_OUTPUT_DIR = os.getcwd()
+
+# 루트 디렉터리 하위의 solutions 폴더로 경로 변경
+LOCAL_OUTPUT_DIR = os.path.join(os.getcwd(), "solutions")
 
 def run_cmd(cmd):
     return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='ignore')
@@ -25,26 +27,26 @@ def evaluate_in_docker(win_path):
     internal_target = f"{INTERNAL_INBOX}/{base_name}"
     local_json_path = os.path.join(LOCAL_OUTPUT_DIR, f"{model_name}_{base_name}_results.json")
 
-    # 1. 이전 작업 잔재 제거
-    run_cmd(["docker", "exec", CONTAINER_NAME, "rm", "-f", INTERNAL_TASK_FILE])
-    run_cmd(["docker", "exec", CONTAINER_NAME, "rm", "-rf", INTERNAL_INBOX])
+    os.makedirs(LOCAL_OUTPUT_DIR, exist_ok=True)
+
+    # 1. 이전 작업 잔재 완전 초기화 (sh -c 사용)
+    run_cmd(["docker", "exec", CONTAINER_NAME, "sh", "-c", f"rm -f {INTERNAL_TASK_FILE} {INTERNAL_OUTPUT_JSON}"])
+    run_cmd(["docker", "exec", CONTAINER_NAME, "sh", "-c", f"rm -rf {INTERNAL_INBOX}/*"])
     run_cmd(["docker", "exec", CONTAINER_NAME, "mkdir", "-p", INTERNAL_INBOX])
     
-    # 2. 파일 맵 복사
+    # 2. 파일 복사
     cp_res = run_cmd(["docker", "cp", win_path, f"{CONTAINER_NAME}:{INTERNAL_INBOX}/"])
     if cp_res.returncode != 0:
         print(f"[{model_name}] 복사 실패: {cp_res.stderr}")
         return
 
-    # 중간 알림 1
     print(f"[{model_name}] 도커 내부로 파일 복사 완료 ({base_name})")
 
     # 3. 데몬에 작업 지시
-    with open("temp_task.txt", "w") as f: f.write(internal_target)
+    with open("temp_task.txt", "w", encoding='utf-8') as f: f.write(internal_target)
     run_cmd(["docker", "cp", "temp_task.txt", f"{CONTAINER_NAME}:{INTERNAL_TASK_FILE}"])
     os.remove("temp_task.txt")
 
-    # 중간 알림 2
     print(f"[{model_name}] 추론 연산 진행 중... (대기)")
 
     # 4. 결과 대기 및 상태 검증
@@ -67,7 +69,9 @@ def evaluate_in_docker(win_path):
         with open(local_json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             
-        map_key = list(data["data"].keys())[0]
+        # 가장 마지막에 연산된 최신 맵 데이터를 추출
+        map_keys = list(data["data"].keys())
+        map_key = map_keys[-1]
         result_data = data["data"][map_key]
         
         status = result_data.get("status", "unknown")
@@ -75,8 +79,10 @@ def evaluate_in_docker(win_path):
         
         status_mark = "✔ 성공" if status == "success" else "✘ 실패"
         
-        # 최종 완료 알림
         print(f"[{model_name}] 완료 | {status_mark} | 소요시간: {solve_time:.2f}ms | 파일: {base_name}")
+        
+        # 메인 라우터로 저장된 파일 경로 전달 (화면에는 숨김 처리됨)
+        print(f"[JSON_OUTPUT] {local_json_path}")
         
     except Exception as e:
         print(f"[{model_name}] 결과 파싱 실패 ({base_name}): {e}")

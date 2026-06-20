@@ -1,35 +1,53 @@
 import sys
 import subprocess
 import time
+import os
 
-# 각 모델별 하위 폴더 경로 매핑
 MODEL_ROUTING = {
     "drc": "learned-planner/drc_solver.py",
-    # 향후 추가될 모델 경로
+    # 향후 모델 추가 시 여기에 경로 매핑
     # "thinker": "thinker/thinker_solver.py" 
 }
 
 def run_model_solver_sync(model_name, file_path):
     if model_name not in MODEL_ROUTING:
         print(f"[{model_name.upper()}] 오류: 라우팅 경로가 정의되지 않았습니다.")
-        return
+        return None
         
     solver_script = MODEL_ROUTING[model_name]
+    json_path = None
     
     try:
-        # 블로킹 실행 및 실시간 터미널 출력 허용 (capture_output 제거)
-        subprocess.run(
+        # 서브프로세스의 출력을 실시간으로 가로채어 메인 터미널에 스트리밍합니다.
+        process = subprocess.Popen(
             ["python", solver_script, file_path],
-            check=False,
-            timeout=300
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding='utf-8'
         )
+        
+        for line in process.stdout:
+            line = line.strip()
+            if not line:
+                continue
+                
+            # JSON 반출 경로 태그를 포착하면 변수에 저장하고 화면에는 출력하지 않습니다.
+            if line.startswith("[JSON_OUTPUT]"):
+                json_path = line.replace("[JSON_OUTPUT]", "").strip()
+            else:
+                print(line)
+                
+        process.wait(timeout=300)
+        return json_path
             
     except subprocess.TimeoutExpired:
         print(f"[{model_name.upper()}] 타임아웃 발생 (300초 초과): {file_path}")
         subprocess.run(["docker", "restart", f"{model_name}_solver_env"])
+        return None
 
 def main():
-    models = ["drc"] # 활성화된 모델 목록
+    models = ["drc"] 
     
     print("[Master] 시스템 초기화 중... 도커 컨테이너 상태를 확인합니다.")
     subprocess.run(["docker-compose", "up", "-d"])
@@ -46,8 +64,19 @@ def main():
             if not file_path:
                 continue
 
+            generated_jsons = []
+            
+            # 각 모델별 순차 평가 및 결과 수집
             for model in models:
-                run_model_solver_sync(model, file_path)
+                json_result = run_model_solver_sync(model, file_path)
+                if json_result and os.path.exists(json_result):
+                    generated_jsons.append(json_result)
+            
+            # 모델 평가가 1개 이상 완료되었을 경우 자동 분석 실행
+            if generated_jsons:
+                print(f"\n[Master] 평가 완료. 자동 분석 스크립트를 실행합니다...")
+                analyze_cmd = ["python", "analyze_model_results.py"] + generated_jsons
+                subprocess.run(analyze_cmd)
                 
     except KeyboardInterrupt:
         pass
