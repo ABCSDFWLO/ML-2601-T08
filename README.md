@@ -1,4 +1,5 @@
 # 실행방법
+Docker desktop 설치 필요
 
 ```bash
 docker-compose up -d --build # 5~10분가량 소요
