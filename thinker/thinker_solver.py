@@ -21,7 +21,7 @@ def evaluate_in_docker(win_path):
     
     win_path = os.path.abspath(win_path)
     if not os.path.exists(win_path):
-        print(f"[{model_name}] 파일 누락: {win_path}")
+        print(f"[{model_name}] 파일 누락: {win_path}", flush=True)
         return
 
     base_name = os.path.basename(win_path)
@@ -39,13 +39,13 @@ def evaluate_in_docker(win_path):
     run_cmd(["docker", "cp", win_path, f"{CONTAINER_NAME}:{internal_target}"])
     run_cmd(["docker", "exec", CONTAINER_NAME, "sh", "-c", f"echo '{internal_target}' > {INTERNAL_TASK_FILE}"])
     
-    print(f"[{model_name}] 도커 내부로 파일 복사 완료 ({base_name})")
-    print(f"[{model_name}] 추론 연산 진행 중... (대기)")
+    print(f"[{model_name}] 도커 내부로 파일 복사 완료 ({base_name})", flush=True)
+    print(f"[{model_name}] 추론 연산 진행 중... (대기)", flush=True)
 
     while True:
         inspect_res = run_cmd(["docker", "inspect", "-f", "{{.State.Running}}", CONTAINER_NAME])
         if inspect_res.stdout.strip() != "true":
-            print(f"[{model_name}] 치명적 오류: 도커 컨테이너가 예기치 않게 종료되었습니다.")
+            print(f"[{model_name}] 치명적 오류: 도커 컨테이너가 예기치 않게 종료되었습니다.", flush=True)
             return
 
         res = run_cmd(["docker", "exec", CONTAINER_NAME, "ls", INTERNAL_OUTPUT_JSON])
@@ -55,6 +55,7 @@ def evaluate_in_docker(win_path):
 
     os.makedirs(LOCAL_OUTPUT_DIR, exist_ok=True)
 
+    # 5. 결과 반출 및 파싱
     run_cmd(["docker", "cp", f"{CONTAINER_NAME}:{INTERNAL_OUTPUT_JSON}", local_json_path])
     run_cmd(["docker", "exec", CONTAINER_NAME, "rm", "-f", INTERNAL_OUTPUT_JSON])
 
@@ -62,20 +63,17 @@ def evaluate_in_docker(win_path):
         with open(local_json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             
-        map_keys = list(data["data"].keys())
-        map_key = map_keys[-1]
-        result_data = data["data"][map_key]
+        # JSON에 기록된 모든 맵 데이터의 연산 시간을 합산
+        total_solve_time = sum(val.get("total_system_time_ms", 0.0) for val in data.get("data", {}).values())
         
-        status = result_data.get("status", "unknown")
-        solve_time = result_data.get("total_system_time_ms", 0.0)
+        # 합산된 총 소요시간 출력
+        print(f"[{model_name}] 완료 | 총 소요시간: {total_solve_time:.2f}ms | 파일: {base_name}", flush=True)
         
-        status_mark = "✔ 성공" if status == "success" else "✘ 실패"
-        print(f"[{model_name}] 완료 | {status_mark} | 소요시간: {solve_time:.2f}ms | 파일: {base_name}")
+        # 메인 라우터로 저장된 파일 경로 전달 (화면에는 숨김 처리됨)
+        print(f"[JSON_OUTPUT] {local_json_path}", flush=True)
         
-        print(f"[JSON_OUTPUT] {local_json_path}")
-            
     except Exception as e:
-        print(f"[{model_name}] 결과 파싱 오류: {e}")
+        print(f"[{model_name}] 결과 파싱 실패 ({base_name}): {e}", flush=True)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:

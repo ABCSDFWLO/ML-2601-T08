@@ -18,7 +18,7 @@ def run_model_solver_sync(model_name, file_path):
     
     try:
         process = subprocess.Popen(
-            ["python", solver_script, file_path],
+            ["python", "-u", solver_script, file_path],
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,

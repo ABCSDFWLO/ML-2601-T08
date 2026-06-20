@@ -40,14 +40,14 @@ def evaluate_in_docker(win_path):
         print(f"[{model_name}] 복사 실패: {cp_res.stderr}")
         return
 
-    print(f"[{model_name}] 도커 내부로 파일 복사 완료 ({base_name})")
+    print(f"[{model_name}] 도커 내부로 파일 복사 완료 ({base_name})", flush=True)
 
     # 3. 데몬에 작업 지시
     with open("temp_task.txt", "w", encoding='utf-8') as f: f.write(internal_target)
     run_cmd(["docker", "cp", "temp_task.txt", f"{CONTAINER_NAME}:{INTERNAL_TASK_FILE}"])
     os.remove("temp_task.txt")
 
-    print(f"[{model_name}] 추론 연산 진행 중... (대기)")
+    print(f"[{model_name}] 추론 연산 진행 중... (대기)", flush=True)
 
     # 4. 결과 대기 및 상태 검증
     while True:
@@ -69,23 +69,17 @@ def evaluate_in_docker(win_path):
         with open(local_json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
             
-        # 가장 마지막에 연산된 최신 맵 데이터를 추출
-        map_keys = list(data["data"].keys())
-        map_key = map_keys[-1]
-        result_data = data["data"][map_key]
+        # JSON에 기록된 모든 맵 데이터의 연산 시간을 합산
+        total_solve_time = sum(val.get("total_system_time_ms", 0.0) for val in data.get("data", {}).values())
         
-        status = result_data.get("status", "unknown")
-        solve_time = result_data.get("total_system_time_ms", 0.0)
-        
-        status_mark = "✔ 성공" if status == "success" else "✘ 실패"
-        
-        print(f"[{model_name}] 완료 | {status_mark} | 소요시간: {solve_time:.2f}ms | 파일: {base_name}")
+        # 합산된 총 소요시간 출력
+        print(f"[{model_name}] 완료 | 총 소요시간: {total_solve_time:.2f}ms | 파일: {base_name}", flush=True)
         
         # 메인 라우터로 저장된 파일 경로 전달 (화면에는 숨김 처리됨)
-        print(f"[JSON_OUTPUT] {local_json_path}")
+        print(f"[JSON_OUTPUT] {local_json_path}", flush=True)
         
     except Exception as e:
-        print(f"[{model_name}] 결과 파싱 실패 ({base_name}): {e}")
+        print(f"[{model_name}] 결과 파싱 실패 ({base_name}): {e}", flush=True)
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
