@@ -21,9 +21,16 @@ services:
     build:
       context: ./thinker
     container_name: thinker_solver_env
-    ipc: host  # Ray 프레임워크의 공유 메모리 활용을 위해 필수
+    ipc: host
     volumes:
+      # ./thinker 폴더 전체를 /workspace로 마운트 (내부의 csokoban, thinker, trained 모두 포함)
       - ./thinker:/workspace
+    environment:
+      # [핵심 수정] PYTHONPATH에 /workspace/thinker를 명시적으로 추가하여 모듈 인식 오류 해결
+      - PYTHONPATH=/workspace/csokoban:/workspace/thinker:$PYTHONPATH
+      - RAY_OBJECT_STORE_ALLOW_SLOW_STORAGE=1
+      - GRPC_POLL_STRATEGY=poll
+      - GRPC_ENABLE_FORK_SUPPORT=1
     deploy:
       resources:
         reservations:
@@ -31,4 +38,10 @@ services:
             - driver: nvidia
               count: all
               capabilities: [gpu]
-    command: python /workspace/daemon_thinker.py
+    # [핵심 수정] 정확한 하위 폴더로 진입하여 각각 빌드(build_ext) 수행 후, 루트로 빠져나와 데몬 실행
+    command: >
+      bash -c "
+      cd /workspace/csokoban && pip install -e . &&
+      cd /workspace/thinker && python setup.py build_ext --inplace &&
+      cd /workspace && python daemon_thinker.py
+      "

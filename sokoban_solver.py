@@ -5,8 +5,7 @@ import os
 
 MODEL_ROUTING = {
     "drc": "learned-planner/drc_solver.py",
-    # 향후 모델 추가 시 여기에 경로 매핑
-    # "thinker": "thinker/thinker_solver.py" 
+    "thinker": "thinker/thinker_solver.py" 
 }
 
 def run_model_solver_sync(model_name, file_path):
@@ -18,7 +17,6 @@ def run_model_solver_sync(model_name, file_path):
     json_path = None
     
     try:
-        # 서브프로세스의 출력을 실시간으로 가로채어 메인 터미널에 스트리밍합니다.
         process = subprocess.Popen(
             ["python", solver_script, file_path],
             stdout=subprocess.PIPE,
@@ -32,7 +30,6 @@ def run_model_solver_sync(model_name, file_path):
             if not line:
                 continue
                 
-            # JSON 반출 경로 태그를 포착하면 변수에 저장하고 화면에는 출력하지 않습니다.
             if line.startswith("[JSON_OUTPUT]"):
                 json_path = line.replace("[JSON_OUTPUT]", "").strip()
             else:
@@ -47,12 +44,15 @@ def run_model_solver_sync(model_name, file_path):
         return None
 
 def main():
-    models = ["drc"] 
+    models = ["drc", "thinker"] 
     
     print("[Master] 시스템 초기화 중... 도커 컨테이너 상태를 확인합니다.")
     subprocess.run(["docker-compose", "up", "-d"])
     time.sleep(2)
-    print("[Master] 모든 모델 데몬 대기 완료.")
+    print("[Master] 모든 모델 데몬 대기 완료. 시스템을 시작합니다.")
+
+    # 저장소 폴더 강제 생성
+    os.makedirs("solutions", exist_ok=True)
 
     try:
         while True:
@@ -66,13 +66,11 @@ def main():
 
             generated_jsons = []
             
-            # 각 모델별 순차 평가 및 결과 수집
             for model in models:
                 json_result = run_model_solver_sync(model, file_path)
                 if json_result and os.path.exists(json_result):
                     generated_jsons.append(json_result)
             
-            # 모델 평가가 1개 이상 완료되었을 경우 자동 분석 실행
             if generated_jsons:
                 print(f"\n[Master] 평가 완료. 자동 분석 스크립트를 실행합니다...")
                 analyze_cmd = ["python", "analyze_model_results.py"] + generated_jsons
