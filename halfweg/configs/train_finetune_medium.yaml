@@ -15,27 +15,27 @@ train:
   # CURRICULUM LEARNING: Start with PL0 (stable), transition to PL1 (exploratory)
   collector_policy_initial: PL0           # Low-capacity policy for stability
   collector_policy_final: PL1             # High-capacity policy for better coverage
-  curriculum_transition_epoch: 8          # Switch after epoch 8
+  curriculum_transition_epoch: 10         # Switch later for stability
   
   # DATA COMPOSITION: Mix unfiltered, medium, hard for better generalization
   use_curriculum_data: true
   data_sources:
     - name: unfiltered
       glob: /workspace/boxoban-levels/unfiltered/train/*.txt
-      weight: 0.6
+      weight: 0.8
     - name: medium
       glob: /workspace/boxoban-levels/medium/train/*.txt
-      weight: 0.3
+      weight: 0.15
     - name: hard
       glob: /workspace/boxoban-levels/hard/*.txt
-      weight: 0.1
+      weight: 0.05
   
   # VALIDATION GATE: Baseline from v4 checkpoint on unfiltered_valid_5files
   baseline_unfiltered_valid_solve_rate: 0.58
 
   # Guided data collection
-  n_levels_per_epoch: 4
-  n_attempts_per_level: 1
+  n_levels_per_epoch: 32
+  n_attempts_per_level: 2
   min_commit_steps: 2
   min_partial_ratio: 0.10
   min_partial_actions: 4
@@ -48,7 +48,7 @@ train:
   l2sp_plhw: 0.0001
 
   # Probe / selection / stopping
-  probe_every_epochs: 2
+  probe_every_epochs: 1
   probe_games: 20
   probe_max_steps: 100
   early_stop_patience: 4
