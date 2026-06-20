@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  drc_solver_env:
+    build:
+      context: ./learned-planner
+    container_name: drc_solver_env
+    volumes:
+      - ./learned-planner:/workspace
+      # [추가된 핵심 로직] 호스트의 데이터셋을 도커 내부의 캐시 요구 경로에 강제 연결
+      - ./boxoban-levels:/opt/sokoban_cache/boxoban-levels-master
+    #user: "root" 
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    command: python /workspace/daemon_solver.py

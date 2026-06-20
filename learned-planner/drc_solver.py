@@ -1,101 +1,88 @@
-# 파일명: drc_solver.py (윈도우 호스트용)
+import sys
 import os
 import time
+import json
 import subprocess
-from datetime import datetime
 
-# [설정 변수]
 CONTAINER_NAME = "drc_solver_env"
 INTERNAL_WORKSPACE = "/workspace"
 INTERNAL_INBOX = f"{INTERNAL_WORKSPACE}/inbox"
 INTERNAL_TASK_FILE = f"{INTERNAL_WORKSPACE}/task.txt"
 INTERNAL_OUTPUT_JSON = f"{INTERNAL_WORKSPACE}/DRC33_results.json"
-
 LOCAL_OUTPUT_DIR = os.getcwd()
-
-def log_print(message):
-    """현재 시간을 포함하여 터미널에 출력하는 함수"""
-    current_time = datetime.now().strftime("%H:%M:%S")
-    print(f"[{current_time}] {message}")
 
 def run_cmd(cmd):
     return subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='ignore')
 
-def start_docker_environment():
-    print("[Master] Starting Docker container...")
-    run_cmd(["docker", "start", CONTAINER_NAME])
-    
-    # [추가] root 권한으로 캐시 폴더 생성 및 심볼릭 링크 강제 연결
-    print("[Master] Applying cache path patch as root...")
-    run_cmd(["docker", "exec", "-u", "root", CONTAINER_NAME, "mkdir", "-p", "/workspace/.sokoban_cache"])
-    run_cmd(["docker", "exec", "-u", "root", CONTAINER_NAME, "ln", "-sf", "/workspace/.sokoban_cache", "/opt/sokoban_cache"])
-    
-    print("[Master] Cleaning up previous tasks...")
+def evaluate_in_docker(win_path):
+    model_name = "DRC33"
+    win_path = os.path.abspath(win_path)
+    if not os.path.exists(win_path):
+        print(f"[{model_name}] 파일 누락: {win_path}")
+        return
+
+    base_name = os.path.basename(win_path)
+    internal_target = f"{INTERNAL_INBOX}/{base_name}"
+    local_json_path = os.path.join(LOCAL_OUTPUT_DIR, f"{model_name}_{base_name}_results.json")
+
+    # 1. 이전 작업 잔재 제거
     run_cmd(["docker", "exec", CONTAINER_NAME, "rm", "-f", INTERNAL_TASK_FILE])
     run_cmd(["docker", "exec", CONTAINER_NAME, "rm", "-rf", INTERNAL_INBOX])
     run_cmd(["docker", "exec", CONTAINER_NAME, "mkdir", "-p", INTERNAL_INBOX])
     
-    print("[Master] Starting DRC33 Daemon in background...")
-    run_cmd(["docker", "exec", "-d", CONTAINER_NAME, "python", f"{INTERNAL_WORKSPACE}/daemon_solver.py"])
-    
-    print("[Master] Waiting for DRC33 model to load into VRAM (10s)...")
-    time.sleep(10)
+    # 2. 파일 맵 복사
+    cp_res = run_cmd(["docker", "cp", win_path, f"{CONTAINER_NAME}:{INTERNAL_INBOX}/"])
+    if cp_res.returncode != 0:
+        print(f"[{model_name}] 복사 실패: {cp_res.stderr}")
+        return
 
-def check_docker_task_done():
-    res = run_cmd(["docker", "exec", CONTAINER_NAME, "ls", INTERNAL_TASK_FILE])
-    return res.returncode != 0
+    # 중간 알림 1
+    print(f"[{model_name}] 도커 내부로 파일 복사 완료 ({base_name})")
 
-def main():
-    start_docker_environment()
-    
+    # 3. 데몬에 작업 지시
+    with open("temp_task.txt", "w") as f: f.write(internal_target)
+    run_cmd(["docker", "cp", "temp_task.txt", f"{CONTAINER_NAME}:{INTERNAL_TASK_FILE}"])
+    os.remove("temp_task.txt")
+
+    # 중간 알림 2
+    print(f"[{model_name}] 추론 연산 진행 중... (대기)")
+
+    # 4. 결과 대기 및 상태 검증
     while True:
-        try:
-            win_path = input("\n[Master] 평가할 윈도우 파일/폴더 경로를 입력하세요 (종료: 'q'): ").strip()
-            
-            if win_path.lower() in ['q', 'quit', 'exit']:
-                with open("temp_exit.txt", "w") as f: f.write("exit")
-                run_cmd(["docker", "cp", "temp_exit.txt", f"{CONTAINER_NAME}:{INTERNAL_TASK_FILE}"])
-                os.remove("temp_exit.txt")
-                print("[Master] Shutting down...")
-                break
-            
-            win_path = os.path.abspath(win_path)
-                
-            if not os.path.exists(win_path):
-                print(f"[Error] 윈도우 경로를 찾을 수 없습니다: {win_path}")
-                continue
+        inspect_res = run_cmd(["docker", "inspect", "-f", "{{.State.Running}}", CONTAINER_NAME])
+        if inspect_res.stdout.strip() != "true":
+            print(f"[{model_name}] 치명적 오류: 도커 컨테이너가 예기치 않게 종료되었습니다.")
+            return
 
-            base_name = os.path.basename(win_path.rstrip("\\/"))
-            internal_target = f"{INTERNAL_INBOX}/{base_name}"
-
-            print(f"[Master] Copying data to Docker ({base_name})...")
-            run_cmd(["docker", "exec", CONTAINER_NAME, "rm", "-rf", INTERNAL_INBOX])
-            run_cmd(["docker", "exec", CONTAINER_NAME, "mkdir", "-p", INTERNAL_INBOX])
-            
-            cp_res = run_cmd(["docker", "cp", win_path, f"{CONTAINER_NAME}:{INTERNAL_INBOX}/"])
-            if cp_res.returncode != 0:
-                print(f"[Error] 복사 실패: {cp_res.stderr}")
-                continue
-
-            print("[Master] Triggering Docker daemon...")
-            with open("temp_task.txt", "w") as f: f.write(internal_target)
-            run_cmd(["docker", "cp", "temp_task.txt", f"{CONTAINER_NAME}:{INTERNAL_TASK_FILE}"])
-            os.remove("temp_task.txt")
-
-            log_print("[Master] Waiting for Docker to finish...")
-            while not check_docker_task_done():
-                time.sleep(1)
-
-            log_print("[Master] Retrieving results from Docker...")
-            local_json_path = os.path.join(LOCAL_OUTPUT_DIR, f"DRC33_{base_name}_results.json")
-            run_cmd(["docker", "cp", f"{CONTAINER_NAME}:{INTERNAL_OUTPUT_JSON}", local_json_path])
-            log_print(f"[Master] Done! Saved locally to: {local_json_path}")
-
-        except KeyboardInterrupt:
-            with open("temp_exit.txt", "w") as f: f.write("exit")
-            run_cmd(["docker", "cp", "temp_exit.txt", f"{CONTAINER_NAME}:{INTERNAL_TASK_FILE}"])
-            if os.path.exists("temp_exit.txt"): os.remove("temp_exit.txt")
+        res = run_cmd(["docker", "exec", CONTAINER_NAME, "ls", INTERNAL_OUTPUT_JSON])
+        if res.returncode == 0:
             break
+        time.sleep(0.5)
+
+    # 5. 결과 반출 및 파싱
+    run_cmd(["docker", "cp", f"{CONTAINER_NAME}:{INTERNAL_OUTPUT_JSON}", local_json_path])
+    run_cmd(["docker", "exec", CONTAINER_NAME, "rm", "-f", INTERNAL_OUTPUT_JSON])
+
+    try:
+        with open(local_json_path, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        map_key = list(data["data"].keys())[0]
+        result_data = data["data"][map_key]
+        
+        status = result_data.get("status", "unknown")
+        solve_time = result_data.get("total_system_time_ms", 0.0)
+        
+        status_mark = "✔ 성공" if status == "success" else "✘ 실패"
+        
+        # 최종 완료 알림
+        print(f"[{model_name}] 완료 | {status_mark} | 소요시간: {solve_time:.2f}ms | 파일: {base_name}")
+        
+    except Exception as e:
+        print(f"[{model_name}] 결과 파싱 실패 ({base_name}): {e}")
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1:
+        evaluate_in_docker(sys.argv[1])
+    else:
+        print("[DRC33] 입력 인자가 부족합니다.")

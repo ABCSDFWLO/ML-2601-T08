@@ -68,6 +68,9 @@ FROM main-pre-pip as main
 ENV ENVPOOL_WHEEL="https://github.com/AlignmentResearch/envpool/releases/download/v0.3.0/envpool-0.8.4-cp311-cp311-linux_x86_64.whl"
 RUN pip install "${ENVPOOL_WHEEL}"
 
+RUN pip install huggingface_hub
+RUN python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='AlignmentResearch/learned-planner', allow_patterns=['drc33/bkynosqi/cp_2002944000/*', 'drc33/bkynosqi/*.json', 'drc33/bkynosqi/*.txt'])"
+
 # Copy whole repo and install
 COPY --chown=${USERNAME}:${USERNAME} . .
 RUN pip install --require-virtualenv -e ".[dev]"
