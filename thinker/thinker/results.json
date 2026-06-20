@@ -1,4 +1,5 @@
 {
+    "model": "thinker",
     "data": {
         "testsokoban.txt_map_000": {
             "status": "success",

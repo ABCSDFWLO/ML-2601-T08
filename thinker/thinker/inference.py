@@ -60,7 +60,15 @@ def run_inference(flags, maps):
     model_checkpoint = torch.load(os.path.join(flags.load_checkpoint, "ckp_model.tar"), map_location=device)
 
     flags.env = "cSokoban-test-v0"
-    results = {"data": {}}
+    
+    # 루트 레벨에 모델명 추가
+    results = {
+        "model": "thinker",
+        "data": {}
+    }
+    
+    # 맵 키 조합을 위한 파일명 추출 (예: testsokoban.txt)
+    base_filename = os.path.basename(flags.map_path)
     
     for map_id, map_data in maps.items():
         print(f"\n--- [DEBUG] Processing Map {map_id} ---")
@@ -84,7 +92,6 @@ def run_inference(flags, maps):
         aug_step_count = 0
         real_step_count = 0
         
-        # 누적 시간 측정용 변수 초기화
         accumulated_inference_time = 0.0
         accumulated_planning_time = 0.0
         
@@ -95,7 +102,6 @@ def run_inference(flags, maps):
         while not done:
             aug_step_count += 1
             
-            # 1. 정책 네트워크 연산 시간 측정
             actor_start_time = time.perf_counter()
             with torch.no_grad():
                 actor_out, core_state = actor_net(obs, core_state, greedy=getattr(flags, 'greedy', False))
@@ -107,20 +113,16 @@ def run_inference(flags, maps):
                 env_action[0, 0, 1] = actor_out.im_action.item()
                 env_action[0, 0, 2] = actor_out.reset_action.item()
             
-            # 2. 월드 모델 예측 및 환경 시뮬레이션 시간 측정
             env_start_time = time.perf_counter()
             obs = env.step(env_action, model_net=model_net)
             env_time_ms = (time.perf_counter() - env_start_time) * 1000
             
-            # 요구사항 반영: inference_time에 연산+시뮬레이션 시간 합산, planning_time에 시뮬레이션 시간만 누적
             accumulated_inference_time += (actor_time_ms + env_time_ms)
             accumulated_planning_time += env_time_ms
             
             if obs.cur_t.item() == 0:
                 real_step_count += 1
                 action_str = get_action_string(actor_out.action.item())
-
-                #print(f"[DEBUG] Map {map_id} | Real Step {real_step_count} | Action: {action_str} | Inference: {accumulated_inference_time:.2f}ms | Planning: {accumulated_planning_time:.2f}ms")
                 
                 solution.append({
                     "step": real_step_count,
@@ -128,7 +130,6 @@ def run_inference(flags, maps):
                     "planning_time": round(accumulated_planning_time, 4),
                     "action": action_str
                 })
-                # 다음 실제 행동 측정을 위해 누적 시간 초기화
                 accumulated_inference_time = 0.0
                 accumulated_planning_time = 0.0
             
@@ -143,7 +144,9 @@ def run_inference(flags, maps):
         total_inference_time_ms = sum(step["forward_time"] for step in solution)
         total_planning_time_ms = sum(step["planning_time"] for step in solution)
         
-        map_key = f"map_{int(map_id):03d}"
+        # 파일명과 맵 ID를 결합하여 키 생성
+        map_key = f"{base_filename}_map_{int(map_id):03d}"
+        
         results["data"][map_key] = {
             "status": status,
             "steps": real_step_count,

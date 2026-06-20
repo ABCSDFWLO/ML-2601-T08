@@ -1,595 +1,596 @@
 {
+    "model": "thinker",
     "data": {
-        "map_000": {
+        "testsokoban.txt_map_000": {
             "status": "success",
             "steps": 4,
-            "inference_time_ms": 1172.58,
-            "planning_time_ms": 698.94,
-            "total_system_time_ms": 2840.44,
+            "inference_time_ms": 2270.44,
+            "planning_time_ms": 889.45,
+            "total_system_time_ms": 3851.69,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 751.5313,
-                    "planning_time": 371.3608,
+                    "forward_time": 1309.551,
+                    "planning_time": 473.3407,
                     "action": "R"
                 },
                 {
                     "step": 2,
-                    "forward_time": 152.5115,
-                    "planning_time": 133.8145,
+                    "forward_time": 253.8997,
+                    "planning_time": 127.3984,
                     "action": "R"
                 },
                 {
                     "step": 3,
-                    "forward_time": 133.9437,
-                    "planning_time": 88.4975,
+                    "forward_time": 479.8487,
+                    "planning_time": 186.4183,
                     "action": "R"
                 },
                 {
                     "step": 4,
-                    "forward_time": 134.5936,
-                    "planning_time": 105.2656,
+                    "forward_time": 227.1418,
+                    "planning_time": 102.289,
                     "action": "R"
                 }
             ]
         },
-        "map_001": {
+        "testsokoban.txt_map_001": {
             "status": "success",
             "steps": 37,
-            "inference_time_ms": 5023.43,
-            "planning_time_ms": 4025.88,
-            "total_system_time_ms": 9737.05,
+            "inference_time_ms": 14036.31,
+            "planning_time_ms": 5938.13,
+            "total_system_time_ms": 14855.67,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 126.4338,
-                    "planning_time": 112.596,
+                    "forward_time": 252.4716,
+                    "planning_time": 118.948,
                     "action": "R"
                 },
                 {
                     "step": 2,
-                    "forward_time": 126.317,
-                    "planning_time": 122.9357,
+                    "forward_time": 250.6105,
+                    "planning_time": 123.8874,
                     "action": "R"
                 },
                 {
                     "step": 3,
-                    "forward_time": 395.1648,
-                    "planning_time": 284.0629,
+                    "forward_time": 390.4473,
+                    "planning_time": 115.6106,
                     "action": "U"
                 },
                 {
                     "step": 4,
-                    "forward_time": 135.4918,
-                    "planning_time": 121.5773,
+                    "forward_time": 261.0033,
+                    "planning_time": 121.3532,
                     "action": "U"
                 },
                 {
                     "step": 5,
-                    "forward_time": 123.3861,
-                    "planning_time": 103.474,
+                    "forward_time": 288.8835,
+                    "planning_time": 136.4739,
                     "action": "U"
                 },
                 {
                     "step": 6,
-                    "forward_time": 122.6573,
-                    "planning_time": 91.0079,
+                    "forward_time": 221.4148,
+                    "planning_time": 92.2801,
                     "action": "U"
                 },
                 {
                     "step": 7,
-                    "forward_time": 122.4308,
-                    "planning_time": 90.3544,
+                    "forward_time": 234.4391,
+                    "planning_time": 97.5779,
                     "action": "L"
                 },
                 {
                     "step": 8,
-                    "forward_time": 122.0234,
-                    "planning_time": 126.0089,
+                    "forward_time": 624.6261,
+                    "planning_time": 281.9377,
                     "action": "L"
                 },
                 {
                     "step": 9,
-                    "forward_time": 128.0548,
-                    "planning_time": 121.31,
+                    "forward_time": 949.0058,
+                    "planning_time": 447.0705,
                     "action": "D"
                 },
                 {
                     "step": 10,
-                    "forward_time": 128.0889,
-                    "planning_time": 97.5986,
+                    "forward_time": 719.1234,
+                    "planning_time": 314.0845,
                     "action": "L"
                 },
                 {
                     "step": 11,
-                    "forward_time": 126.9168,
-                    "planning_time": 122.2244,
+                    "forward_time": 338.8212,
+                    "planning_time": 168.2974,
                     "action": "U"
                 },
                 {
                     "step": 12,
-                    "forward_time": 125.006,
-                    "planning_time": 147.3466,
+                    "forward_time": 282.0367,
+                    "planning_time": 154.6871,
                     "action": "L"
                 },
                 {
                     "step": 13,
-                    "forward_time": 123.697,
-                    "planning_time": 120.2209,
+                    "forward_time": 254.4371,
+                    "planning_time": 125.9286,
                     "action": "D"
                 },
                 {
                     "step": 14,
-                    "forward_time": 122.664,
-                    "planning_time": 89.8932,
+                    "forward_time": 227.7073,
+                    "planning_time": 98.1294,
                     "action": "L"
                 },
                 {
                     "step": 15,
-                    "forward_time": 122.9739,
-                    "planning_time": 56.967,
+                    "forward_time": 184.9456,
+                    "planning_time": 58.5347,
                     "action": "U"
                 },
                 {
                     "step": 16,
-                    "forward_time": 126.5326,
-                    "planning_time": 106.9622,
+                    "forward_time": 301.1904,
+                    "planning_time": 138.1412,
                     "action": "R"
                 },
                 {
                     "step": 17,
-                    "forward_time": 126.2797,
-                    "planning_time": 105.9868,
+                    "forward_time": 243.7683,
+                    "planning_time": 114.3562,
                     "action": "R"
                 },
                 {
                     "step": 18,
-                    "forward_time": 126.6705,
-                    "planning_time": 149.5571,
+                    "forward_time": 758.6563,
+                    "planning_time": 388.0511,
                     "action": "U"
                 },
                 {
                     "step": 19,
-                    "forward_time": 131.933,
-                    "planning_time": 57.8521,
+                    "forward_time": 703.3577,
+                    "planning_time": 193.637,
                     "action": "R"
                 },
                 {
                     "step": 20,
-                    "forward_time": 124.6302,
-                    "planning_time": 137.0352,
+                    "forward_time": 272.2258,
+                    "planning_time": 145.4273,
                     "action": "U"
                 },
                 {
                     "step": 21,
-                    "forward_time": 123.285,
-                    "planning_time": 114.268,
+                    "forward_time": 270.2533,
+                    "planning_time": 138.7932,
                     "action": "L"
                 },
                 {
                     "step": 22,
-                    "forward_time": 183.53,
-                    "planning_time": 183.2163,
+                    "forward_time": 1057.1763,
+                    "planning_time": 538.8188,
                     "action": "L"
                 },
                 {
                     "step": 23,
-                    "forward_time": 123.1651,
-                    "planning_time": 87.5505,
+                    "forward_time": 838.5014,
+                    "planning_time": 316.137,
                     "action": "D"
                 },
                 {
                     "step": 24,
-                    "forward_time": 122.5449,
-                    "planning_time": 89.9934,
+                    "forward_time": 233.2308,
+                    "planning_time": 100.2414,
                     "action": "R"
                 },
                 {
                     "step": 25,
-                    "forward_time": 128.7495,
-                    "planning_time": 90.4436,
+                    "forward_time": 236.9862,
+                    "planning_time": 103.2538,
                     "action": "D"
                 },
                 {
                     "step": 26,
-                    "forward_time": 123.2743,
-                    "planning_time": 58.195,
+                    "forward_time": 191.1625,
+                    "planning_time": 61.2312,
                     "action": "D"
                 },
                 {
                     "step": 27,
-                    "forward_time": 125.8573,
-                    "planning_time": 102.2885,
+                    "forward_time": 225.8857,
+                    "planning_time": 95.0727,
                     "action": "R"
                 },
                 {
                     "step": 28,
-                    "forward_time": 137.8869,
-                    "planning_time": 92.5291,
+                    "forward_time": 224.551,
+                    "planning_time": 94.628,
                     "action": "R"
                 },
                 {
                     "step": 29,
-                    "forward_time": 124.6282,
-                    "planning_time": 148.8511,
+                    "forward_time": 294.5763,
+                    "planning_time": 160.0719,
                     "action": "U"
                 },
                 {
                     "step": 30,
-                    "forward_time": 125.4769,
-                    "planning_time": 123.3211,
+                    "forward_time": 256.2093,
+                    "planning_time": 125.5663,
                     "action": "R"
                 },
                 {
                     "step": 31,
-                    "forward_time": 124.8518,
-                    "planning_time": 57.6937,
+                    "forward_time": 190.5981,
+                    "planning_time": 59.6167,
                     "action": "D"
                 },
                 {
                     "step": 32,
-                    "forward_time": 125.0395,
-                    "planning_time": 125.2949,
+                    "forward_time": 273.1499,
+                    "planning_time": 142.7269,
                     "action": "D"
                 },
                 {
                     "step": 33,
-                    "forward_time": 127.8456,
-                    "planning_time": 72.5119,
+                    "forward_time": 694.7484,
+                    "planning_time": 188.4476,
                     "action": "D"
                 },
                 {
                     "step": 34,
-                    "forward_time": 132.5753,
-                    "planning_time": 87.6161,
+                    "forward_time": 221.0935,
+                    "planning_time": 89.6768,
                     "action": "D"
                 },
                 {
                     "step": 35,
-                    "forward_time": 126.7197,
-                    "planning_time": 47.5431,
+                    "forward_time": 184.7145,
+                    "planning_time": 56.3348,
                     "action": "L"
                 },
                 {
                     "step": 36,
-                    "forward_time": 127.3932,
-                    "planning_time": 40.738,
+                    "forward_time": 640.3162,
+                    "planning_time": 121.4807,
                     "action": "D"
                 },
                 {
                     "step": 37,
-                    "forward_time": 153.2564,
-                    "planning_time": 138.8512,
+                    "forward_time": 243.9892,
+                    "planning_time": 111.6191,
                     "action": "R"
                 }
             ]
         },
-        "map_002": {
+        "testsokoban.txt_map_002": {
             "status": "success",
             "steps": 26,
-            "inference_time_ms": 4057.18,
-            "planning_time_ms": 3660.84,
-            "total_system_time_ms": 8366.57,
+            "inference_time_ms": 12255.6,
+            "planning_time_ms": 5399.86,
+            "total_system_time_ms": 12979.65,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 133.6294,
-                    "planning_time": 156.7142,
+                    "forward_time": 288.7297,
+                    "planning_time": 163.2378,
                     "action": "D"
                 },
                 {
                     "step": 2,
-                    "forward_time": 145.1957,
-                    "planning_time": 177.3555,
+                    "forward_time": 261.488,
+                    "planning_time": 136.4637,
                     "action": "R"
                 },
                 {
                     "step": 3,
-                    "forward_time": 515.0534,
-                    "planning_time": 508.1245,
+                    "forward_time": 265.2473,
+                    "planning_time": 136.6811,
                     "action": "R"
                 },
                 {
                     "step": 4,
-                    "forward_time": 221.6231,
-                    "planning_time": 225.9383,
+                    "forward_time": 261.5112,
+                    "planning_time": 135.4518,
                     "action": "R"
                 },
                 {
                     "step": 5,
-                    "forward_time": 132.1603,
-                    "planning_time": 130.908,
+                    "forward_time": 247.491,
+                    "planning_time": 122.2768,
                     "action": "D"
                 },
                 {
                     "step": 6,
-                    "forward_time": 138.0199,
-                    "planning_time": 103.8833,
+                    "forward_time": 223.3897,
+                    "planning_time": 94.2007,
                     "action": "L"
                 },
                 {
                     "step": 7,
-                    "forward_time": 135.7876,
-                    "planning_time": 155.9067,
+                    "forward_time": 263.5655,
+                    "planning_time": 138.915,
                     "action": "D"
                 },
                 {
                     "step": 8,
-                    "forward_time": 126.2322,
-                    "planning_time": 125.2496,
+                    "forward_time": 257.5834,
+                    "planning_time": 131.6497,
                     "action": "L"
                 },
                 {
                     "step": 9,
-                    "forward_time": 124.7625,
-                    "planning_time": 60.927,
+                    "forward_time": 188.6517,
+                    "planning_time": 58.041,
                     "action": "L"
                 },
                 {
                     "step": 10,
-                    "forward_time": 134.091,
-                    "planning_time": 98.9483,
+                    "forward_time": 219.8833,
+                    "planning_time": 90.6411,
                     "action": "R"
                 },
                 {
                     "step": 11,
-                    "forward_time": 132.0849,
-                    "planning_time": 143.2346,
+                    "forward_time": 275.3552,
+                    "planning_time": 150.7649,
                     "action": "R"
                 },
                 {
                     "step": 12,
-                    "forward_time": 126.761,
-                    "planning_time": 162.5918,
+                    "forward_time": 1042.8419,
+                    "planning_time": 525.9128,
                     "action": "U"
                 },
                 {
                     "step": 13,
-                    "forward_time": 307.7271,
-                    "planning_time": 287.1034,
+                    "forward_time": 897.2773,
+                    "planning_time": 377.2663,
                     "action": "U"
                 },
                 {
                     "step": 14,
-                    "forward_time": 129.663,
-                    "planning_time": 136.7645,
+                    "forward_time": 963.2964,
+                    "planning_time": 448.4079,
                     "action": "L"
                 },
                 {
                     "step": 15,
-                    "forward_time": 126.5558,
-                    "planning_time": 129.4844,
+                    "forward_time": 981.3474,
+                    "planning_time": 469.6622,
                     "action": "L"
                 },
                 {
                     "step": 16,
-                    "forward_time": 124.3331,
-                    "planning_time": 93.0604,
+                    "forward_time": 301.0201,
+                    "planning_time": 163.0182,
                     "action": "L"
                 },
                 {
                     "step": 17,
-                    "forward_time": 131.3314,
-                    "planning_time": 63.4909,
+                    "forward_time": 218.4767,
+                    "planning_time": 72.1675,
                     "action": "D"
                 },
                 {
                     "step": 18,
-                    "forward_time": 125.1082,
-                    "planning_time": 93.9376,
+                    "forward_time": 864.2033,
+                    "planning_time": 340.4365,
                     "action": "D"
                 },
                 {
                     "step": 19,
-                    "forward_time": 123.7329,
-                    "planning_time": 59.4866,
+                    "forward_time": 540.1439,
+                    "planning_time": 181.9631,
                     "action": "R"
                 },
                 {
                     "step": 20,
-                    "forward_time": 127.9114,
-                    "planning_time": 126.4345,
+                    "forward_time": 292.8457,
+                    "planning_time": 148.6748,
                     "action": "R"
                 },
                 {
                     "step": 21,
-                    "forward_time": 134.3412,
-                    "planning_time": 128.2186,
+                    "forward_time": 494.707,
+                    "planning_time": 215.8438,
                     "action": "R"
                 },
                 {
                     "step": 22,
-                    "forward_time": 153.5044,
-                    "planning_time": 89.0067,
+                    "forward_time": 758.663,
+                    "planning_time": 223.9294,
                     "action": "D"
                 },
                 {
                     "step": 23,
-                    "forward_time": 129.6968,
-                    "planning_time": 138.8305,
+                    "forward_time": 1061.2625,
+                    "planning_time": 526.6426,
                     "action": "R"
                 },
                 {
                     "step": 24,
-                    "forward_time": 123.2853,
-                    "planning_time": 110.2797,
+                    "forward_time": 267.5801,
+                    "planning_time": 128.1713,
                     "action": "R"
                 },
                 {
                     "step": 25,
-                    "forward_time": 122.723,
-                    "planning_time": 117.2411,
+                    "forward_time": 251.5209,
+                    "planning_time": 127.3022,
                     "action": "U"
                 },
                 {
                     "step": 26,
-                    "forward_time": 131.8698,
-                    "planning_time": 37.7184,
+                    "forward_time": 567.5221,
+                    "planning_time": 92.1334,
                     "action": "L"
                 }
             ]
         },
-        "map_003": {
+        "testsokoban.txt_map_003": {
             "status": "success",
             "steps": 26,
-            "inference_time_ms": 4882.42,
-            "planning_time_ms": 3893.86,
-            "total_system_time_ms": 9396.51,
+            "inference_time_ms": 8974.23,
+            "planning_time_ms": 3996.95,
+            "total_system_time_ms": 9621.02,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 122.5764,
-                    "planning_time": 129.8735,
+                    "forward_time": 345.1541,
+                    "planning_time": 197.1279,
                     "action": "U"
                 },
                 {
                     "step": 2,
-                    "forward_time": 121.9232,
-                    "planning_time": 122.2959,
+                    "forward_time": 362.5248,
+                    "planning_time": 182.7605,
                     "action": "L"
                 },
                 {
                     "step": 3,
-                    "forward_time": 133.2402,
-                    "planning_time": 137.2017,
+                    "forward_time": 263.4247,
+                    "planning_time": 132.4858,
                     "action": "U"
                 },
                 {
                     "step": 4,
-                    "forward_time": 125.6227,
-                    "planning_time": 61.0813,
+                    "forward_time": 197.0726,
+                    "planning_time": 64.7288,
                     "action": "R"
                 },
                 {
                     "step": 5,
-                    "forward_time": 131.4007,
-                    "planning_time": 127.4158,
+                    "forward_time": 252.1356,
+                    "planning_time": 122.3607,
                     "action": "R"
                 },
                 {
                     "step": 6,
-                    "forward_time": 122.4417,
-                    "planning_time": 75.5159,
+                    "forward_time": 188.1379,
+                    "planning_time": 61.1666,
                     "action": "D"
                 },
                 {
                     "step": 7,
-                    "forward_time": 517.8411,
-                    "planning_time": 461.2725,
+                    "forward_time": 269.4846,
+                    "planning_time": 140.1216,
                     "action": "R"
                 },
                 {
                     "step": 8,
-                    "forward_time": 125.8432,
-                    "planning_time": 150.712,
+                    "forward_time": 1090.4837,
+                    "planning_time": 570.0997,
                     "action": "U"
                 },
                 {
                     "step": 9,
-                    "forward_time": 122.5976,
-                    "planning_time": 125.0506,
+                    "forward_time": 277.9974,
+                    "planning_time": 142.7788,
                     "action": "R"
                 },
                 {
                     "step": 10,
-                    "forward_time": 134.5008,
-                    "planning_time": 66.1221,
+                    "forward_time": 751.7453,
+                    "planning_time": 214.69,
                     "action": "D"
                 },
                 {
                     "step": 11,
-                    "forward_time": 121.7993,
-                    "planning_time": 87.863,
+                    "forward_time": 868.8077,
+                    "planning_time": 343.878,
                     "action": "D"
                 },
                 {
                     "step": 12,
-                    "forward_time": 120.9535,
-                    "planning_time": 55.4091,
+                    "forward_time": 365.4206,
+                    "planning_time": 146.8488,
                     "action": "L"
                 },
                 {
                     "step": 13,
-                    "forward_time": 122.46,
-                    "planning_time": 119.7153,
+                    "forward_time": 365.0209,
+                    "planning_time": 193.7645,
                     "action": "D"
                 },
                 {
                     "step": 14,
-                    "forward_time": 123.0939,
-                    "planning_time": 134.3365,
+                    "forward_time": 377.9875,
+                    "planning_time": 188.907,
                     "action": "D"
                 },
                 {
                     "step": 15,
-                    "forward_time": 123.8622,
-                    "planning_time": 103.1237,
+                    "forward_time": 286.003,
+                    "planning_time": 132.1668,
                     "action": "D"
                 },
                 {
                     "step": 16,
-                    "forward_time": 121.2935,
-                    "planning_time": 111.7121,
+                    "forward_time": 317.3566,
+                    "planning_time": 156.3192,
                     "action": "L"
                 },
                 {
                     "step": 17,
-                    "forward_time": 123.7117,
-                    "planning_time": 111.2911,
+                    "forward_time": 245.1299,
+                    "planning_time": 99.9808,
                     "action": "U"
                 },
                 {
                     "step": 18,
-                    "forward_time": 529.6579,
-                    "planning_time": 475.2506,
+                    "forward_time": 271.5118,
+                    "planning_time": 139.3752,
                     "action": "U"
                 },
                 {
                     "step": 19,
-                    "forward_time": 181.1338,
-                    "planning_time": 123.9476,
+                    "forward_time": 246.2336,
+                    "planning_time": 106.2174,
                     "action": "U"
                 },
                 {
                     "step": 20,
-                    "forward_time": 122.9356,
-                    "planning_time": 109.028,
+                    "forward_time": 224.3596,
+                    "planning_time": 95.3497,
                     "action": "D"
                 },
                 {
                     "step": 21,
-                    "forward_time": 135.2937,
-                    "planning_time": 127.4809,
+                    "forward_time": 263.7296,
+                    "planning_time": 130.8587,
                     "action": "D"
                 },
                 {
                     "step": 22,
-                    "forward_time": 125.7707,
-                    "planning_time": 61.0952,
+                    "forward_time": 195.0143,
+                    "planning_time": 66.5125,
                     "action": "L"
                 },
                 {
                     "step": 23,
-                    "forward_time": 137.7822,
-                    "planning_time": 70.2905,
+                    "forward_time": 179.7807,
+                    "planning_time": 53.7182,
                     "action": "D"
                 },
                 {
                     "step": 24,
-                    "forward_time": 122.8086,
-                    "planning_time": 50.5058,
+                    "forward_time": 190.1314,
+                    "planning_time": 63.2026,
                     "action": "L"
                 },
                 {
                     "step": 25,
-                    "forward_time": 503.6394,
-                    "planning_time": 463.1502,
+                    "forward_time": 369.1678,
+                    "planning_time": 175.5428,
                     "action": "U"
                 },
                 {
                     "step": 26,
-                    "forward_time": 508.2411,
-                    "planning_time": 233.1172,
+                    "forward_time": 210.4107,
+                    "planning_time": 75.9901,
                     "action": "U"
                 }
             ]

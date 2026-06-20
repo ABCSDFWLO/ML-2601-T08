@@ -130,7 +130,10 @@ def main():
         target_files = [target_path] if os.path.isfile(target_path) else glob.glob(os.path.join(target_path, "**", "*.txt"), recursive=True)
         
         # 기존 파일을 불러와서 누적하는 로직을 완전히 삭제하고 매 작업마다 딕셔너리 초기화
-        results_data = {"data": {}}
+        results_data = {
+            "model": "DRC33",
+            "data": {}
+        }
 
         for file_path in target_files:
             file_name = os.path.basename(file_path)
