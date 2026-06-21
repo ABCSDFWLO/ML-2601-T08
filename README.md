@@ -45,6 +45,61 @@ Total Combined Solved: [4/4]
 [Master] 시스템을 종료합니다.
 ```
 
+```bash
+(ml_env) PS D:\projects\ML-2601-T08> python .\sokoban_solver_parallel.py
+[Master] 시스템 초기화 중... 환경 상태를 확인합니다.
+time="2026-06-21T22:01:31+09:00" level=warning msg="The \"PYTHONPATH\" variable is not set. Defaulting to a blank string."
+time="2026-06-21T22:01:31+09:00" level=warning msg="D:\\projects\\ML-2601-T08\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+[+] up 2/2
+ ✔ Container thinker_solver_env Running                                                                             0.0s
+ ✔ Container drc_solver_env     Running                                                                             0.0s
+[Master] 모든 모델 데몬 대기 완료.
+
+[Master] 실행할 모델명(선택) 및 맵 경로 (종료 'q')
+-> boxoban-levels\testsokoban.txt
+[Master] 실행 대상 모델: DRC, THINKER, HALFWEG
+[DRC33] 도커 내부로 파일 복사 완료 (testsokoban.txt)
+[DRC33] 추론 연산 진행 중... (대기)
+[thinker] 도커 내부로 파일 복사 완료 (testsokoban.txt)
+[thinker] 추론 연산 진행 중... (대기)
+[DRC33] 완료 | 총 소요시간: 1807.88ms | 파일: testsokoban.txt
+[HALFWEG] 추론 연산 진행 중... (대기)
+[thinker] 완료 | 총 소요시간: 125508.91ms | 파일: testsokoban.txt
+[HALFWEG] 완료 | 총 소요시간: 118409.66ms | 파일: testsokoban.txt
+
+[Master] 연산 완료. 자동 분석 스크립트를 실행합니다...
+--------------------------------------------------------------------------------
+Model Name      | Acc (%)  | Solved   | Unique   | Avg Steps  | Avg Time(ms)
+--------------------------------------------------------------------------------
+DRC33           | 100.00   | 4        | 0        | 22.50      | 343.59
+thinker         | 100.00   | 4        | 0        | 23.75      | 29877.25
+halfweg         | 25.00    | 1        | 0        | 4.00       | 7092.21
+--------------------------------------------------------------------------------
+Total Combined Solved: [4/4]
+--------------------------------------------------------------------------------
+
+[Master] 실행할 모델명(선택) 및 맵 경로 (종료 'q')
+-> drc boxoban-levels\testsokoban2.txt
+[Master] 실행 대상 모델: DRC
+[DRC33] 도커 내부로 파일 복사 완료 (testsokoban2.txt)
+[DRC33] 추론 연산 진행 중... (대기)
+[DRC33] 완료 | 총 소요시간: 7638.27ms | 파일: testsokoban2.txt
+
+[Master] 연산 완료. 자동 분석 스크립트를 실행합니다...
+--------------------------------------------------------------------------------
+Model Name      | Acc (%)  | Solved   | Unique   | Avg Steps  | Avg Time(ms)
+--------------------------------------------------------------------------------
+DRC33           | 70.00    | 7        | 7        | 22.00      | 352.21
+--------------------------------------------------------------------------------
+Total Combined Solved: [7/10]
+--------------------------------------------------------------------------------
+
+[Master] 실행할 모델명(선택) 및 맵 경로 (종료 'q')
+-> q
+
+[Master] 시스템을 종료합니다.
+```
+
 
 # AI 기반 고속 소코반 솔버 연구 (AI-based High-speed Sokoban Solver)
 
