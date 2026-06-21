@@ -2,6 +2,7 @@
 Docker desktop 설치 필요
 
 ```bash
+pip install -r requirements.txt
 docker-compose up -d --build # 5~10분가량 소요
 python sokoban_solver.py
 ```

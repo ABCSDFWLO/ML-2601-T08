@@ -1,0 +1,75 @@
+name: 'HalfWeg robust finetune (guided trajectories)'
+cmd: 'train'
+
+infra:
+  device: gpu
+
+train:
+  # Directory is rotated file-by-file each epoch.
+  levels: /workspace/boxoban-levels/unfiltered/train
+  probe_levels: /workspace/boxoban-levels/unfiltered/valid
+
+  epochs: 30
+  n_max_episode_steps: 60
+
+  # CURRICULUM LEARNING: Start with PL0 (stable), transition to PL1 (exploratory)
+  collector_policy_initial: PL0           # Low-capacity policy for stability
+  collector_policy_final: PL1             # High-capacity policy for better coverage
+  curriculum_transition_epoch: 10         # Switch later for stability
+  
+  # DATA COMPOSITION: Mix unfiltered, medium, hard for better generalization
+  use_curriculum_data: true
+  data_sources:
+    - name: unfiltered
+      glob: /workspace/boxoban-levels/unfiltered/train/*.txt
+      weight: 0.8
+    - name: medium
+      glob: /workspace/boxoban-levels/medium/train/*.txt
+      weight: 0.15
+    - name: hard
+      glob: /workspace/boxoban-levels/hard/*.txt
+      weight: 0.05
+  
+  # VALIDATION GATE: Baseline from v4 checkpoint on unfiltered_valid_5files
+  baseline_unfiltered_valid_solve_rate: 0.58
+
+  # Guided data collection
+  n_levels_per_epoch: 32
+  n_attempts_per_level: 2
+  min_commit_steps: 2
+  min_partial_ratio: 0.10
+  min_partial_actions: 4
+  max_partial_ratio: 0.30
+  plhw_min_partial_ratio: 0.1
+
+  # Optimization
+  batch_size: 128
+  l2sp_plta: 0.0001
+  l2sp_plhw: 0.0001
+
+  # Probe / selection / stopping
+  probe_every_epochs: 1
+  probe_games: 20
+  probe_max_steps: 100
+  early_stop_patience: 4
+  min_probe_improve: 0.001
+
+  save_every_epochs: 20
+  checkpoints_dir: /workspace/halfweg/checkpoints
+
+env:
+  name: boxoban
+  n_max_episode_steps: 100
+
+model:
+  PLTA:
+    class: Sokoban_PLTA_v4_1010
+    learning_rate: 0.0001
+    weight_decay: 0.0001
+    batch_size: 128
+  PLHW:
+    class: Sokoban_PLHW_v4_1010
+    learning_rate: 0.0001
+    weight_decay: 0.0001
+    batch_size: 128
+  checkpoint: 'trained_models/boxoban_vast_v4_20250421-073320__repacked.ckpt'
