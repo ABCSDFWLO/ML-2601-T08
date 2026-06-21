@@ -1,0 +1,50 @@
+{
+    "model": "thinker",
+    "data": {
+        "test1map.txt_map_000": {
+            "status": "success",
+            "steps": 6,
+            "inference_time_ms": 2012.28,
+            "planning_time_ms": 908.2,
+            "total_system_time_ms": 2385.56,
+            "solution": [
+                {
+                    "step": 1,
+                    "forward_time": 243.4154,
+                    "planning_time": 93.8304,
+                    "action": "R"
+                },
+                {
+                    "step": 2,
+                    "forward_time": 247.9129,
+                    "planning_time": 105.2714,
+                    "action": "U"
+                },
+                {
+                    "step": 3,
+                    "forward_time": 700.1694,
+                    "planning_time": 327.3387,
+                    "action": "R"
+                },
+                {
+                    "step": 4,
+                    "forward_time": 283.9923,
+                    "planning_time": 138.2837,
+                    "action": "U"
+                },
+                {
+                    "step": 5,
+                    "forward_time": 262.7512,
+                    "planning_time": 111.4012,
+                    "action": "R"
+                },
+                {
+                    "step": 6,
+                    "forward_time": 274.0372,
+                    "planning_time": 132.078,
+                    "action": "R"
+                }
+            ]
+        }
+    }
+}

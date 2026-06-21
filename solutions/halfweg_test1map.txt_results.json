@@ -1,0 +1,43 @@
+{
+    "model": "halfweg",
+    "data": {
+        "test1map.txt_map_000": {
+            "status": "success",
+            "steps": 6,
+            "inference_time_ms": 2394.605600002251,
+            "total_system_time_ms": 2441.484999999375,
+            "solution": [
+                {
+                    "step": 1,
+                    "forward_time": 1.5425687999995716,
+                    "action": "R"
+                },
+                {
+                    "step": 2,
+                    "forward_time": 0.16167829999903915,
+                    "action": "U"
+                },
+                {
+                    "step": 3,
+                    "forward_time": 0.16414970000187168,
+                    "action": "R"
+                },
+                {
+                    "step": 4,
+                    "forward_time": 0.17572560000189696,
+                    "action": "U"
+                },
+                {
+                    "step": 5,
+                    "forward_time": 0.18270919999849866,
+                    "action": "R"
+                },
+                {
+                    "step": 6,
+                    "forward_time": 0.16777400000137277,
+                    "action": "R"
+                }
+            ]
+        }
+    }
+}

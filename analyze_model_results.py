@@ -79,11 +79,36 @@ def analyze_models(file_paths):
         print(f"{model:<15} | {res['acc']:<8.2f} | {res['solved']:<8} | {res['unique']:<8} | {res['avg_steps']:<10.2f} | {res['avg_time_ms']:.2f}")
     print("-" * 80)
     
-    # [추가됨] 전체 모델 통합 해결 지표 계산
     total_solved_union = len(set().union(*all_solved_sets.values()))
     total_unique_maps = len(all_map_ids)
     print(f"Total Combined Solved: [{total_solved_union}/{total_unique_maps}]")
     print("-" * 80)
+
+    # 5. 단일 맵 평가 시 상세 솔루션 출력 로직
+    if len(all_map_ids) == 1:
+        map_id = list(all_map_ids)[0]
+        print("\n" + "=" * 80)
+        print(f"[단일 맵 분석] 상세 행동 시퀀스 (Map ID: {map_id})")
+        print("=" * 80)
+        
+        for model, data in models_data.items():
+            # 현재 맵 ID에 해당하는 원본 키 탐색
+            map_key = next((k for k in data.keys() if k.endswith(f"_map_{map_id}")), None)
+            
+            if map_key and "solution" in data[map_key]:
+                status = data[map_key].get("status", "unknown")
+                actions = [step.get("action", "?") for step in data[map_key]["solution"] if "action" in step]
+                action_str = "".join(actions)
+                
+                # 터미널 가독성을 위해 50글자마다 줄바꿈
+                wrapped_action_str = "\n".join([action_str[i:i+50] for i in range(0, len(action_str), 50)])
+                
+                print(f"[{model}] - Status: {status.upper()} | Total Steps: {len(actions)}")
+                if wrapped_action_str:
+                    print(wrapped_action_str)
+                else:
+                    print("No actions recorded.")
+                print("-" * 80)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
