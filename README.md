@@ -10,10 +10,10 @@ python sokoban_solver.py
 
 실행 예제 로그
 ```bash
-(sokoban_env) PS D:\projects\ML-2601-T08> python .\sokoban_solver.py
+(ml_env) PS D:\projects\ML-2601-T08> python .\sokoban_solver.py
 [Master] 시스템 초기화 중... 도커 컨테이너 상태를 확인합니다.
-time="2026-06-20T20:55:36+09:00" level=warning msg="The \"PYTHONPATH\" variable is not set. Defaulting to a blank string."
-time="2026-06-20T20:55:36+09:00" level=warning msg="D:\\projects\\ML-2601-T08\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+time="2026-06-21T19:51:39+09:00" level=warning msg="The \"PYTHONPATH\" variable is not set. Defaulting to a blank string."
+time="2026-06-21T19:51:39+09:00" level=warning msg="D:\\projects\\ML-2601-T08\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
 [+] up 2/2
  ✔ Container drc_solver_env     Running                                                                             0.0s
  ✔ Container thinker_solver_env Running                                                                             0.0s
@@ -22,37 +22,22 @@ time="2026-06-20T20:55:36+09:00" level=warning msg="D:\\projects\\ML-2601-T08\\d
 [Master] 평가할 맵 경로 (종료 'q'): boxoban-levels\testsokoban.txt
 [DRC33] 도커 내부로 파일 복사 완료 (testsokoban.txt)
 [DRC33] 추론 연산 진행 중... (대기)
-[DRC33] 완료 | 총 소요시간: 2294.28ms | 파일: testsokoban.txt
+[DRC33] 완료 | 총 소요시간: 1353.75ms | 파일: testsokoban.txt
 [thinker] 도커 내부로 파일 복사 완료 (testsokoban.txt)
 [thinker] 추론 연산 진행 중... (대기)
-[thinker] 완료 | 총 소요시간: 39656.03ms | 파일: testsokoban.txt
+[thinker] 완료 | 총 소요시간: 35268.96ms | 파일: testsokoban.txt
+[HALFWEG] 추론 연산 진행 중... (대기)
+[HALFWEG] 완료 | 총 소요시간: 107663.86ms | 파일: testsokoban.txt
 
 [Master] 평가 완료. 자동 분석 스크립트를 실행합니다...
 --------------------------------------------------------------------------------
 Model Name      | Acc (%)  | Solved   | Unique   | Avg Steps  | Avg Time(ms)
 --------------------------------------------------------------------------------
-DRC33           | 100.00   | 4        | 0        | 22.50      | 477.66
-thinker         | 100.00   | 4        | 0        | 23.00      | 9045.42
+DRC33           | 100.00   | 4        | 0        | 22.50      | 257.29
+thinker         | 100.00   | 4        | 0        | 23.25      | 8223.07
+halfweg         | 25.00    | 1        | 0        | 4.00       | 2163.74
 --------------------------------------------------------------------------------
 Total Combined Solved: [4/4]
---------------------------------------------------------------------------------
-
-[Master] 평가할 맵 경로 (종료 'q'): boxoban-levels\testsokoban2.txt
-[DRC33] 도커 내부로 파일 복사 완료 (testsokoban2.txt)
-[DRC33] 추론 연산 진행 중... (대기)
-[DRC33] 완료 | 총 소요시간: 5409.00ms | 파일: testsokoban2.txt
-[thinker] 도커 내부로 파일 복사 완료 (testsokoban2.txt)
-[thinker] 추론 연산 진행 중... (대기)
-[thinker] 완료 | 총 소요시간: 233590.34ms | 파일: testsokoban2.txt
-
-[Master] 평가 완료. 자동 분석 스크립트를 실행합니다...
---------------------------------------------------------------------------------
-Model Name      | Acc (%)  | Solved   | Unique   | Avg Steps  | Avg Time(ms)
---------------------------------------------------------------------------------
-DRC33           | 70.00    | 7        | 1        | 22.00      | 310.67
-thinker         | 60.00    | 6        | 0        | 21.50      | 7044.27
---------------------------------------------------------------------------------
-Total Combined Solved: [7/10]
 --------------------------------------------------------------------------------
 
 [Master] 평가할 맵 경로 (종료 'q'): q
