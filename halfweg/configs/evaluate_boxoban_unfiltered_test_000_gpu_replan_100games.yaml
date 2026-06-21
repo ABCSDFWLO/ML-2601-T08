@@ -1,0 +1,39 @@
+name: 'Evaluate checkpoint on boxoban unfiltered test 000 (replan 100games)'
+cmd: 'evaluate'
+env:
+  name: boxoban
+  n_max_episode_steps: 100
+  levels: /workspace/boxoban-levels/unfiltered/test/000.txt
+
+infra:
+  sub_processes_cnt: 1
+  threads_cnt: 10
+  device: gpu
+  log: mem
+
+evaluate:
+  n_games_to_solve: 100
+  mem_max_episodes: 100000
+  towards_or_away: 'towards'
+  policies: 'last'
+  targets: all
+  method: closed_loop_replan
+  replan_every_actions: 0
+  replan_mismatch_threshold: 0.20
+  replan_stall_steps: 10
+  min_commit_steps: 4
+  progress_every_games: 1
+  progress_every_targets: 10
+
+model:
+  PLTA:
+    class: Sokoban_PLTA_v4_1010
+    learning_rate: 0.003
+    weight_decay: 0
+    batch_size: 128
+  PLHW:
+    class: Sokoban_PLHW_v4_1010
+    learning_rate: 0.003
+    weight_decay: 0
+    batch_size: 128
+  checkpoint: 'trained_models/boxoban_vast_v4_20250421-073320__repacked.ckpt'
