@@ -5,7 +5,8 @@ import os
 
 MODEL_ROUTING = {
     "drc": "learned-planner/drc_solver.py",
-    "thinker": "thinker/thinker_solver.py" 
+    "thinker": "thinker/thinker_solver.py",
+    "halfweg": "halfweg/halfweg_solver.py"
 }
 
 def run_model_solver_sync(model_name, file_path):
@@ -44,7 +45,7 @@ def run_model_solver_sync(model_name, file_path):
         return None
 
 def main():
-    models = ["drc", "thinker"] 
+    models = ["drc", "thinker", "halfweg"] 
     
     print("[Master] 시스템 초기화 중... 도커 컨테이너 상태를 확인합니다.")
     subprocess.run(["docker-compose", "up", "-d"])
