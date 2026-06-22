@@ -4,37 +4,37 @@
         "test1map.txt_map_000": {
             "status": "success",
             "steps": 6,
-            "inference_time_ms": 2394.605600002251,
-            "total_system_time_ms": 2441.484999999375,
+            "inference_time_ms": 1792.9667000062182,
+            "total_system_time_ms": 1793.813099997351,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 1.5425687999995716,
+                    "forward_time": 1.204875200004608,
                     "action": "R"
                 },
                 {
                     "step": 2,
-                    "forward_time": 0.16167829999903915,
+                    "forward_time": 0.12109019999479642,
                     "action": "U"
                 },
                 {
                     "step": 3,
-                    "forward_time": 0.16414970000187168,
+                    "forward_time": 0.11809050000010757,
                     "action": "R"
                 },
                 {
                     "step": 4,
-                    "forward_time": 0.17572560000189696,
+                    "forward_time": 0.12147879999974975,
                     "action": "U"
                 },
                 {
                     "step": 5,
-                    "forward_time": 0.18270919999849866,
+                    "forward_time": 0.12008010000135982,
                     "action": "R"
                 },
                 {
                     "step": 6,
-                    "forward_time": 0.16777400000137277,
+                    "forward_time": 0.10735190000559669,
                     "action": "R"
                 }
             ]

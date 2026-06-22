@@ -4,12 +4,12 @@
         "test1map.txt_map_000": {
             "status": "success",
             "steps": 6,
-            "inference_time_ms": 69.9543230002746,
-            "total_system_time_ms": 118.25955300082569,
+            "inference_time_ms": 709.2661939896061,
+            "total_system_time_ms": 808.6061390058603,
             "solution": [
                 {
                     "step": 1,
-                    "forward_time": 0.01419725199957611,
+                    "forward_time": 0.6417751839981065,
                     "action": "R",
                     "policy_logits": [
                         0.8556625247001648,
@@ -21,7 +21,7 @@
                 },
                 {
                     "step": 2,
-                    "forward_time": 0.00794146800035378,
+                    "forward_time": 0.010937254002783448,
                     "action": "U",
                     "policy_logits": [
                         4.262190341949463,
@@ -33,7 +33,7 @@
                 },
                 {
                     "step": 3,
-                    "forward_time": 0.007642819000466261,
+                    "forward_time": 0.0075840040008188225,
                     "action": "U",
                     "policy_logits": [
                         4.132545471191406,
@@ -45,7 +45,7 @@
                 },
                 {
                     "step": 4,
-                    "forward_time": 0.007623560999491019,
+                    "forward_time": 0.026690751998103224,
                     "action": "R",
                     "policy_logits": [
                         -1.2076728343963623,
@@ -57,7 +57,7 @@
                 },
                 {
                     "step": 5,
-                    "forward_time": 0.008402098999795271,
+                    "forward_time": 0.014436260993534233,
                     "action": "R",
                     "policy_logits": [
                         -1.2566090822219849,
@@ -69,7 +69,7 @@
                 },
                 {
                     "step": 6,
-                    "forward_time": 0.024147124000592157,
+                    "forward_time": 0.007842738996259868,
                     "action": "R",
                     "policy_logits": [
                         -1.3683412075042725,
